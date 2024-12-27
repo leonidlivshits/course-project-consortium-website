@@ -1,0 +1,41 @@
+.contact-field {
+    background-color: #f9f9f9;
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid #ddd;
+  }
+  
+  .contact-field h2 {
+    margin-bottom: 1rem;
+  }
+  
+  .contact-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .contact-item i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #E78F8E;
+  }
+  
+  .contact-item p {
+    margin: 0;
+    font-size: 1rem;
+  }
+  
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .contact-info {
+      flex-direction: column;
+    }
+  }
+  
