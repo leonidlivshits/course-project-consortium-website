@@ -10,7 +10,8 @@ const News = () => {
   return (
     <div>
       <Navbar />
-      <div className="page">
+      <div className="page"> 
+      <h1>Новости</h1>
       </div>
       <Footer />
     </div>
