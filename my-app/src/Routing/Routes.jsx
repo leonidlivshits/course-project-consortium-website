@@ -1,0 +1,54 @@
+import About from "../pages/Organisations/OrganisationsPage.jsx";
+import Publications from "../pages/Publications/Publications.jsx";
+import News from "../pages/News/News.jsx";
+import Home from "../pages/Home/Home.jsx"
+// import Projects from "../pages/materials/Materials.jsx";
+// import About from "../pages/about/About.jsx";
+import Events from "../pages/Events/Events.jsx";
+import NoPage from "../pages/NoPage/NoPage.jsx";
+import {
+    MAIN_ROUTE,
+    ORGANISATIONS_ROUTE,
+    PUBLICATIONS_ROUTE,
+    NEWS_ROUTE,
+    // ABOUT_ROUTE
+    NO_PAGE_ROUTE,
+    PROJECTS_ROUTE,
+    EVENTS_ROUTE
+} from "./const.js";
+// import Register from "../pages/register/Register.jsx";
+
+export const publicRoutes = [
+  {
+    path: MAIN_ROUTE,
+    Element: <Home />,
+  },
+  {
+    path: ORGANISATIONS_ROUTE,
+    Element: <About />,
+  },
+  {
+    path: PUBLICATIONS_ROUTE,
+    Element: <Publications />,
+  },
+  {
+    path: NEWS_ROUTE,
+    Element: <News />,
+  },
+  {
+    path: NO_PAGE_ROUTE,
+    Element: <NoPage />,
+  },
+//   {
+//     path: PROJECTS_ROUTE,
+//     Element: <Projects />,
+//   },
+//   {
+//     path: ABOUT_ROUTE,
+//     Element: <About />,
+//   },
+  {
+    path: EVENTS_ROUTE,
+    Element: <Events />,
+  },
+];
