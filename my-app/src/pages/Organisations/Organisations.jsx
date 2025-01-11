@@ -1,16 +1,10 @@
 import React from "react";
-
-// import leonidImage from "../images/leo.jpeg";
-// import dmitriyImage from "../images/dima.jpeg";
-// import alexandrImage from "../images/alex.jpeg";
-// import agilImage from "../images/agile.jpeg";
-
 import "./Organisations.css";
 
 const AboutUs = () => {
   return (
     <div className="aboutUs">
-      <h1>Наша команда</h1>
+      <h1>Члены консорциума</h1>
       <div className="team">
         <div className="teamMember">
           {/* <img src={leonidImage} alt="leo-livshits" /> */}
