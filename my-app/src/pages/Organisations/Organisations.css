@@ -1,0 +1,50 @@
+.aboutUs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .team {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .teamMember {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .teamMember img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+  .teamMember h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .teamMember p {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  .teamMember a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  
+  .teamMember a:hover {
+    text-decoration: underline;
+  }
+  
