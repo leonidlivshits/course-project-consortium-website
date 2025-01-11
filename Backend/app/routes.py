@@ -75,6 +75,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/api/contact', methods=['POST'])
 def create_contact():
+    print("create_contact --------------------------------------")
     data = request.get_json()
     new_contact = Contact(
         name=data['name'],

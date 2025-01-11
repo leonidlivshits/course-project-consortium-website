@@ -54,10 +54,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from .config import Config
-
+from .models import db
 from flask_cors import CORS
 
-db = SQLAlchemy()
+#db = SQLAlchemy()
 mail = Mail()
 
 def create_app():
@@ -66,9 +66,9 @@ def create_app():
     app.config['DEBUG'] = True
     db.init_app(app)
     mail.init_app(app)
-    CORS(app)
+    #CORS(app)
     
-    #CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
+    CORS(app, origins = ["http://localhost:3000", "http://127.0.0.1:3000"])
     # Регистрация Blueprint
     from .routes import main
     app.register_blueprint(main)
