@@ -1,9 +1,13 @@
 .navbar {
     background-color: #acd8aa;
     height: 70px;
-    display: flex;
+    display: grid;
     justify-content: center;
     align-items: center;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
   }
   
   .navbar-container {

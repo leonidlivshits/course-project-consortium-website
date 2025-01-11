@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <a href="/" className="navbar-logo">
-          <img src="/hse_logo.png" alt="Кардиогенетика" />
+          <img src="/hse_logo.png"/>
           {/* <span>Кардиогенетика</span> */}
         </a>
         <div className="menu-toggle" id="mobile-menu">
