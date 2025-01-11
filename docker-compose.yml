@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: cardio_user
+      POSTGRES_PASSWORD: CardioGenHSE
+      POSTGRES_DB: cardiogenetics_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    ports:
+      - "5432:5432"
+
+  web:
+    build:
+      context: ./Backend
+    volumes:
+      - ./Backend:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - backend-network
+
+  frontend:
+    build: ./my-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - web
+    networks:
+      - backend-network
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-network:
+    driver: bridge
+
+
+# version: '3.8'
+
+# services:
+#   db:
+#     image: postgres:13
+#     environment:
+#       POSTGRES_USER: cardio_user
+#       POSTGRES_PASSWORD: CardioGenHSE
+#       POSTGRES_DB: cardiogenetics_db
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+# web:
+#     build: ./Backend
+#     volumes:
+#       - ./Backend:/app
+#     working_dir: /app
+#     ports:
+#       - "5000:5000"
+#     depends_on:
+#       - db
+      
+#   frontend:
+#     build: ./my-app
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - web
+
+# volumes:
+#   postgres_data:
