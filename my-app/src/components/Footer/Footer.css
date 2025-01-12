@@ -3,9 +3,9 @@ footer {
     color: white;
     padding: 1rem 0; /* Уменьшите padding */
     text-align: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+    /* position: fixed;
+    bottom: 0; */
+    /* width: 100%; */
     z-index: 1000;
 }
 

@@ -1,0 +1,96 @@
+/* .page {
+    padding: 20px;
+    background-color: #f0f0f0;
+  }
+  
+  .page h1 {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .events-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .events-list .col-lg-4 {
+    flex: 1 1 calc(33.333% - 20px);
+    max-width: calc(33.333% - 20px);
+  }
+  
+  @media screen and (max-width: 768px) {
+    .events-list .col-lg-4 {
+      flex: 1 1 calc(50% - 20px);
+      max-width: calc(50% - 20px);
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .events-list .col-lg-4 {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+   */
+/* Общий стиль для контейнера */
+.events-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+/* Стиль для заголовка раздела */
+.events-container h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Стиль для кнопки */
+.events-container button {
+    background-color: #ffcccc;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Стиль для карточек событий */
+.event-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Стиль для изображения в карточке */
+.event-card img {
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Стиль для заголовка карточки */
+.event-card h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Стиль для текста карточки */
+.event-card p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Стиль для даты карточки */
+.event-card .date {
+    font-size: 12px;
+    color: #999;
+}

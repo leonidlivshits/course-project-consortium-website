@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Home from "../pages/Home/Home";
 import Events from "../pages/Events/Events";
+import EventDetails from "../pages/Events/EventDetail";
 import News from "../pages/News/News";
 import Publications from "../pages/Publications/Publications";
 import NoPage from "../pages/NoPage/NoPage";
@@ -16,6 +17,7 @@ const AppRouter = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/events" element={<Events />} />
+      <Route path="/events/:id" element={<EventDetails />} />
       <Route path="/organisations" element={<OrganisationsPage />} />
       <Route path="/news" element={<News />} />
       <Route path="/publications" element={<Publications />} />

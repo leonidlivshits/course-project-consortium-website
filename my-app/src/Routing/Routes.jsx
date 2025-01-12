@@ -6,6 +6,8 @@ import Home from "../pages/Home/Home.jsx"
 // import About from "../pages/about/About.jsx";
 import Events from "../pages/Events/Events.jsx";
 import NoPage from "../pages/NoPage/NoPage.jsx";
+import EventDetail from "../pages/Events/EventDetail.jsx";
+
 import {
     MAIN_ROUTE,
     ORGANISATIONS_ROUTE,
@@ -14,7 +16,8 @@ import {
     // ABOUT_ROUTE
     NO_PAGE_ROUTE,
     PROJECTS_ROUTE,
-    EVENTS_ROUTE
+    EVENTS_ROUTE,
+    EVENT_DETAIL_ROUTE
 } from "./const.js";
 // import Register from "../pages/register/Register.jsx";
 
@@ -50,5 +53,9 @@ export const publicRoutes = [
   {
     path: EVENTS_ROUTE,
     Element: <Events />,
+  },
+  {
+    path: EVENT_DETAIL_ROUTE, // Новый маршрут для деталей событий
+    Element: <EventDetail />,
   },
 ];
