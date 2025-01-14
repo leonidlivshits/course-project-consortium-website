@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import ContactForm from '../../components/ContactForm/ContactForm';
 import './EventDetail.css';
+import Navbar from "../../components/Navbar/Navbar";
+import Footer from "../../components/Footer/Footer";
 
 const EventDetail = () => {
   const location = useLocation();
@@ -9,6 +11,7 @@ const EventDetail = () => {
 
   return (
     <section className="event-detail">
+      <Navbar />
       <div className="container">
         <h2>{event.title}</h2>
         <p><strong>Дата:</strong> {event.date}</p>
@@ -17,6 +20,7 @@ const EventDetail = () => {
         <p>{event.description}</p>
         <ContactForm />
       </div>
+      <Footer />
     </section>
   );
 };
