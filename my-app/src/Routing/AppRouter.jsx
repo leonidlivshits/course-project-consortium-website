@@ -10,8 +10,6 @@ import NoPage from "../pages/NoPage/NoPage";
 import Projects from "../pages/Projects/Projects";
 import OrganisationsPage from "../pages/Organisations/OrganisationsPage";
 
-import { publicRoutes } from "./Routes";
-
 const AppRouter = () => {
   return (
     <Routes>

@@ -17,26 +17,10 @@ RUN python /app/seed_db.py
 COPY ./seed_projects.py /app/seed_projects.py
 RUN python /app/seed_projects.py
 
+COPY ./seed_news.py /app/seed_news.py
+RUN python /app/seed_news.py
+
 COPY ./scripts/wait-for-it.sh /usr/local/bin/wait-for-it
 RUN chmod +x /usr/local/bin/wait-for-it
 
 CMD ["wait-for-it", "db:5432", "--", "python", "run.py"]
-
-
-
-
-
-
-# FROM python:3.9-slim
-# ENV PYTHONPATH=/app
-
-# WORKDIR /app
-
-# COPY requirements.txt requirements.txt
-# RUN pip install -r requirements.txt
-
-# #COPY . .
-# COPY . /app
-# #WORKDIR /app
-
-# CMD ["python", "run.py"]

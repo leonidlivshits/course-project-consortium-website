@@ -1,6 +1,3 @@
-// const Publications = () => <div className="content"><h1>Публикации</h1></div>;
-// export default Publications;
-
 import React from "react";
 
 import Navbar from "../../components/Navbar/Navbar";
