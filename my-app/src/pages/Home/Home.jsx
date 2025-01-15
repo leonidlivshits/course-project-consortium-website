@@ -1,6 +1,3 @@
-// const Home = () => <div className="content"><h1>Добро пожаловать на сайт</h1></div>;
-// export default Home;
-
 import React from "react";
 
 import Navbar from "../../components/Navbar/Navbar";

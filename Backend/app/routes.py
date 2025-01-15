@@ -102,7 +102,7 @@
 # Последняя рабочая версия
 
 from flask import Blueprint, request, jsonify
-from .models import db, Contact, Event, Project
+from .models import db, Contact, Event, Project, News
 from flask_mail import Message
 from . import mail
 
@@ -162,3 +162,20 @@ def get_projects():
             'materials': project.materials
         })
     return jsonify(projects_list), 200
+
+@main.route('/api/news', methods=['GET'])
+def get_news():
+    news_1 = News.query.all()
+    news_list = []
+    for news in news_1:
+        news_list.append({
+            'id': news.id,
+            'title': news.title,
+            'authors': news.authors,
+            'publication_date': news.publication_date,
+            'description': news.description,
+            'magazine': news.magazine,
+            'content': news.content,
+            'materials': news.materials
+        })
+    return jsonify(news_list), 200
