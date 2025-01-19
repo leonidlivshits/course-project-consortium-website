@@ -45,3 +45,8 @@ class Publications(db.Model):
     magazine = db.Column(db.String(100), nullable=True)
     annotation = db.Column(db.Text, nullable=False)  
     
+class Organisation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image = db.Column(db.String(200), nullable=False)
+    link = db.Column(db.String(200), nullable=False)
+     

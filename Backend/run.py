@@ -3,6 +3,7 @@ from seed_db import seed_events
 from seed_projects import seed_projects
 from seed_news import seed_news
 from seed_publications import seed_publications
+from seed_organisations import seed_organisations
 
 app = create_app()
 
@@ -12,5 +13,6 @@ if __name__ == '__main__':
     seed_projects()
     seed_news()
     seed_publications()
+    seed_organisations()
 
     app.run(host='0.0.0.0', port=5000)

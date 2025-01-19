@@ -23,6 +23,9 @@ RUN python /app/seed_news.py
 COPY ./seed_publications.py /app/seed_publications.py
 RUN python /app/seed_publications.py
 
+COPY ./seed_organisations.py /app/seed_organisations.py
+RUN python /app/seed_organisations.py
+
 COPY ./scripts/wait-for-it.sh /usr/local/bin/wait-for-it
 RUN chmod +x /usr/local/bin/wait-for-it
 

@@ -3,7 +3,7 @@
 # Последняя рабочая версия
 
 from flask import Blueprint, request, jsonify
-from .models import db, Contact, Event, Project, News, Publications
+from .models import db, Contact, Event, Project, News, Publications, Organisation
 from flask_mail import Message
 from . import mail
 
@@ -96,3 +96,15 @@ def get_publications():
             'annotation': publication.annotation
         })
     return jsonify(publications_list), 200
+
+@main.route('/api/organisations', methods=['GET'])
+def get_organisations():
+    organisations_1 = Organisation.query.all()
+    organisations_list = []
+    for organisation in organisations_1:
+        organisations_list.append({
+            'id': organisation.id,
+            'image': organisation.image,
+            'link': organisation.link
+        })
+    return jsonify(organisations_list), 200

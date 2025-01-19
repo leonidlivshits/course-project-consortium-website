@@ -1,10 +1,11 @@
-import About from "../pages/Organisations/OrganisationsPage.jsx";
+import Organisations from "../pages/Organisations/Organisations.jsx";
 import Publications from "../pages/Publications/Publications.jsx";
 import News from "../pages/News/News.jsx";
 import Home from "../pages/Home/Home.jsx"
 import Events from "../pages/Events/Events.jsx";
 import NoPage from "../pages/NoPage/NoPage.jsx";
 import EventDetail from "../pages/Events/EventDetail.jsx";
+import Projects from "../pages/Projects/Projects.jsx";
 
 import {
     MAIN_ROUTE,
@@ -24,7 +25,7 @@ export const publicRoutes = [
   },
   {
     path: ORGANISATIONS_ROUTE,
-    Element: <About />,
+    Element: <Organisations />,
   },
   {
     path: PUBLICATIONS_ROUTE,
@@ -41,6 +42,10 @@ export const publicRoutes = [
   {
     path: EVENTS_ROUTE,
     Element: <Events />,
+  },
+  {
+    path: PROJECTS_ROUTE,
+    Element: <Projects />,
   },
   {
     path: EVENT_DETAIL_ROUTE, // Новый маршрут для деталей событий

@@ -1,11 +1,11 @@
 .aboutUs {
-    display: flex;
-    flex-direction: column;
+    /* display: flex; */
+    /* flex-direction: column; */
     align-items: center;
     text-align: center;
-    height: 65vh; /* Занимает всю высоту экрана */
+    height: 100; /* Занимает всю высоту экрана */
     justify-content: center;
-    z-index: 500; 
+    z-index: 1000; 
   }
   
   .team {
