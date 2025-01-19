@@ -1,21 +1,44 @@
-# class Config:
-#     #SQLALCHEMY_DATABASE_URI = 'postgresql://cardio_user:CardioGenHSE@localhost/cardiogenetics_db'
-#     SQLALCHEMY_DATABASE_URI = 'postgresql://cardio_user:CardioGenHSE@db:5432/cardiogenetics_db'
-#     SQLALCHEMY_TRACK_MODIFICATIONS = False
-#     MAIL_SERVER = 'sandbox.smtp.mailtrap.io'
-#     MAIL_PORT = 2525
-#     MAIL_USERNAME = '4fe42efc490081'
-#     MAIL_PASSWORD = '6105673a02dbe9'
-#     MAIL_USE_TLS = True
-#     MAIL_USE_SSL = False
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
-    #SQLALCHEMY_DATABASE_URI = 'postgresql://cardio_user:CardioGenHSE@db:5432/cardiogenetics_db'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://cardio_user:CardioGenHSE@localhost:5432/cardiogenetics_db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    MAIL_SERVER = 'sandbox.smtp.mailtrap.io'
-    MAIL_PORT = 2525
-    MAIL_USERNAME = '4fe42efc490081'
-    MAIL_PASSWORD = '6105673a02dbe9'
-    MAIL_USE_TLS = True
-    MAIL_USE_SSL = False
+    
+    POSTGRES_USER = os.environ.get(
+    'POSTGRES_USER',
+    )
+
+    POSTGRES_DB = os.environ.get(
+    'POSTGRES_DB',
+    )
+
+    POSTGRES_PASSWORD = os.environ.get(
+    'POSTGRES_PASSWORD',
+    )
+
+
+    SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:5432/{POSTGRES_DB}"
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get(
+    'SQLALCHEMY_TRACK_MODIFICATIONS',
+    )
+    MAIL_SERVER = os.environ.get(
+    'MAIL_SERVER',
+    )
+    MAIL_PORT = os.environ.get(
+    'MAIL_PORT',
+    )
+    MAIL_USERNAME = os.environ.get(
+    'SQLALCHEMY_DATABASE_URI',
+    )
+    MAIL_PASSWORD = os.environ.get(
+    'SQLALCHEMY_DATABASE_URI',
+    )
+    MAIL_USE_TLS = os.environ.get(
+    'MAIL_USE_TLS',
+    )
+    MAIL_USE_SSL = os.environ.get(
+    'MAIL_USE_SSL',
+    )
