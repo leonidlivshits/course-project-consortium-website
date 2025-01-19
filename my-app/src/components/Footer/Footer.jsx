@@ -13,20 +13,9 @@ const Footer = () => {
                 </div>
                 <div className="footer-section">
                     <ul>
-                        <li>Публикации</li>
-                        <li>Новости</li>
-                        <li>События</li>
-                        <li>Организации</li>
-                        <li>Контакты</li>
-                    </ul>
-                </div>
-                <div className="footer-section">
-                    <ul>
-                        <li>Поиск</li>
-                        <li>Проекты</li>
-                        <li>Фильтрация</li>
                         <li>Поддержка</li>
                         <li>О нас</li>
+                        <li>Контакты</li>
                     </ul>
                 </div>
             </div>
