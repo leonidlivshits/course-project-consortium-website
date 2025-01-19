@@ -20,19 +20,28 @@ class Event(db.Model):
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)  # Название проекта
-    authors = db.Column(db.String(200), nullable=False)  # Авторы (можно хранить как строку)
-    publication_date = db.Column(db.String(50), nullable=False)  # Дата публикации
-    description = db.Column(db.Text, nullable=False)  # Описание проекта
-    content = db.Column(db.Text, nullable=False)  # Основной текст проекта
-    materials = db.Column(db.Text)  # Материалы (например, ссылки или файлы)
-
+    title = db.Column(db.String(100), nullable=False)
+    authors = db.Column(db.String(200), nullable=False)  
+    publication_date = db.Column(db.String(50), nullable=False) 
+    description = db.Column(db.Text, nullable=False) 
+    content = db.Column(db.Text, nullable=False)  
+    materials = db.Column(db.Text)  
+    
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)  # Название проекта
-    authors = db.Column(db.String(200), nullable=False)  # Авторы (можно хранить как строку)
-    publication_date = db.Column(db.String(50), nullable=False)  # Дата публикации
-    description = db.Column(db.Text, nullable=False)  # Описание проекта
+    title = db.Column(db.String(100), nullable=False) 
+    authors = db.Column(db.String(200), nullable=False)  
+    publication_date = db.Column(db.String(50), nullable=False) 
+    description = db.Column(db.Text, nullable=False)  
     magazine = db.Column(db.String(100), nullable=True)
-    content = db.Column(db.Text, nullable=False)  # Основной текст проекта
-    materials = db.Column(db.Text)  # Материалы (например, ссылки или файлы)
+    content = db.Column(db.Text, nullable=False)  
+    materials = db.Column(db.Text)  
+
+class Publications(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)  
+    authors = db.Column(db.String(200), nullable=False)  
+    publication_date = db.Column(db.String(50), nullable=False)  
+    magazine = db.Column(db.String(100), nullable=True)
+    annotation = db.Column(db.Text, nullable=False)  
+    
