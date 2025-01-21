@@ -11,6 +11,13 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 # Копируем и запускаем скрипт для заполнения базы данных
+COPY ./seed_authors.py /app/seed_authors.py
+RUN python /app/seed_authors.py
+
+COPY ./seed_magazines.py /app/seed_magazines.py
+RUN python /app/seed_magazines.py
+
+
 COPY ./seed_db.py /app/seed_db.py
 RUN python /app/seed_db.py
 

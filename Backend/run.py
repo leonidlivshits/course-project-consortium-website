@@ -4,11 +4,13 @@ from seed_projects import seed_projects
 from seed_news import seed_news
 from seed_publications import seed_publications
 from seed_organisations import seed_organisations
-
+from seed_authors import seed_authors
+from seed_magazines import seed_magazines
 app = create_app()
 
 if __name__ == '__main__':
-    
+    seed_authors()
+    seed_magazines()
     seed_events()
     seed_projects()
     seed_news()
