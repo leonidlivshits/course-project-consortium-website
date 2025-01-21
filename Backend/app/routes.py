@@ -222,18 +222,18 @@ def get_organisations():
         })
     return jsonify(organisations_list), 200
 
-# Маршрут для получения всех журналов
-@main.route('/api/magazines', methods=['GET'])
-def get_magazines():
-    magazines = Magazine.query.all()
-    magazines_list = [{'id': mag.id, 'name': mag.name} for mag in magazines]
-    return jsonify(magazines_list), 200
+# # Маршрут для получения всех журналов
+# @main.route('/api/magazines', methods=['GET'])
+# def get_magazines():
+#     magazines = Magazine.query.all()
+#     magazines_list = [{'id': mag.id, 'name': mag.name} for mag in magazines]
+#     return jsonify(magazines_list), 200
 
-# Маршрут для получения всех авторов
-@main.route('/api/authors', methods=['GET'])
-def get_authors():
-    authors = Author.query.all()
-    authors_list = [{'id': author.id, 'first_name': author.first_name, 
-                     'last_name': author.last_name, 'middle_name': author.middle_name} 
-                    for author in authors]
-    return jsonify(authors_list), 200
+# # Маршрут для получения всех авторов
+# @main.route('/api/authors', methods=['GET'])
+# def get_authors():
+#     authors = Author.query.all()
+#     authors_list = [{'id': author.id, 'first_name': author.first_name, 
+#                      'last_name': author.last_name, 'middle_name': author.middle_name} 
+#                     for author in authors]
+#     return jsonify(authors_list), 200

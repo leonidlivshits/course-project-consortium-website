@@ -59,7 +59,7 @@ const Projects = () => {
         {projects.map((project) => (
           <div key={project.id} className="project">
             <h2>{project.title}</h2>
-            <p><strong>Авторы:</strong> {project.authors}</p>
+            <p><strong>Авторы:</strong> {project.authors.join(', ')}</p>
             <p><strong>Дата публикации:</strong> {project.publication_date}</p>
             <p><strong>Описание:</strong> {project.description}</p>
             <p><strong>Текст:</strong> {project.content}</p>
