@@ -10,5 +10,15 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@babel/plugin-transform-private-property-in-object": "^7.25.9"
-  }
+  },
+  "name": "course-project-consortium-website",
+  "version": "1.0.0",
+  "description": "\"# course-project-consortium-website\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
