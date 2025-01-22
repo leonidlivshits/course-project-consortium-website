@@ -7,7 +7,6 @@ const Navbar = () => {
       <div className="navbar-container">
         <a href="/" className="navbar-logo">
           <img src="/hse_logo.png"/>
-          {/* <span>Кардиогенетика</span> */}
         </a>
         <div className="menu-toggle" id="mobile-menu">
           <span className="bar"></span>

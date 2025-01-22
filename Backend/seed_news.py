@@ -1,32 +1,48 @@
-# # Backend/seed_projects.py
+# # Backend/seed_news.py
 # from app import create_app
-# from app.models import db, News
+# from app.models import db, News, Author, Magazine, news_authors
 
 # app = create_app()
 
 # def seed_news():
 #     with app.app_context():
-#         # Удаляем все существующие проекты (опционально)
-#         db.session.query(News).delete()
+#         # Очистка таблиц News и news_authors
+#         db.session.query(news_authors).delete()  # Очищаем промежуточную таблицу
+#         db.session.query(News).delete()  # Очищаем таблицу News
+#         db.session.commit()
 
-#         # Добавляем тестовые проекты
+#         # Получаем существующих авторов и журналы
+#         author1 = Author.query.filter_by(first_name="Иван", last_name="Иванов").first()
+#         author2 = Author.query.filter_by(first_name="Петр", last_name="Петров").first()
+#         author3 = Author.query.filter_by(first_name="Сергей", last_name="Сидоров").first()
+
+#         magazine = Magazine.query.filter_by(name="Журнал 1").first()
+
+#         if not author1 or not author2 or not author3 or not magazine:
+#             print("Ошибка: Авторы или журналы не найдены. Запустите скрипты seed_authors.py и seed_magazines.py.")
+#             return
+
+#         # Добавляем тестовые новости
 #         news1 = News(
-#             title="Новость",
-#             authors="Иванов И.И., Петров П.П.",
+#             title="Новость 1",
 #             publication_date="2024-01-01",
-#             description="Описание проекта 1",
-#             content="Основной текст проекта 1",
-#             materials="https://example.com/materials1"
+#             description="Описание новости 1",
+#             content="Основной текст новости 1",
+#             materials="https://example.com/materials1",
+#             magazine_id=magazine.id
 #         )
+#         news1.authors.append(author1)
+#         news1.authors.append(author2)
+
 #         news2 = News(
 #             title="Новость 2",
-#             authors="Сидоров С.С.",
 #             publication_date="2023-06-01",
-#             description="Описание проекта 2",
-#             magazine = "Саня гей",
-#             content="Основной текст проекта 2",
-#             materials="https://example.com/materials2"
+#             description="Описание новости 2",
+#             content="Основной текст новости 2",
+#             materials="https://example.com/materials2",
+#             magazine_id=magazine.id
 #         )
+#         news2.authors.append(author3)
 
 #         db.session.add(news1)
 #         db.session.add(news2)
@@ -36,8 +52,7 @@
 # if __name__ == "__main__":
 #     seed_news()
 
-
-# Backend/seed_news.py
+import os
 from app import create_app
 from app.models import db, News, Author, Magazine, news_authors
 
@@ -45,12 +60,12 @@ app = create_app()
 
 def seed_news():
     with app.app_context():
-        # Очистка таблиц News и news_authors
+        # Очистка таблиц Project и project_authors
         db.session.query(news_authors).delete()  # Очищаем промежуточную таблицу
-        db.session.query(News).delete()  # Очищаем таблицу News
+        db.session.query(News).delete()  # Очищаем таблицу Project
         db.session.commit()
 
-        # Получаем существующих авторов и журналы
+        # Получаем существующих авторов
         author1 = Author.query.filter_by(first_name="Иван", last_name="Иванов").first()
         author2 = Author.query.filter_by(first_name="Петр", last_name="Петров").first()
         author3 = Author.query.filter_by(first_name="Сергей", last_name="Сидоров").first()
@@ -58,35 +73,64 @@ def seed_news():
         magazine = Magazine.query.filter_by(name="Журнал 1").first()
 
         if not author1 or not author2 or not author3 or not magazine:
-            print("Ошибка: Авторы или журналы не найдены. Запустите скрипты seed_authors.py и seed_magazines.py.")
+            print("Ошибка: Авторы не найдены. Запустите скрипт seed_authors.py.")
             return
 
-        # Добавляем тестовые новости
+        # Путь к папке uploads
+        UPLOADS_DIR = os.path.join(os.path.dirname(__file__), 'uploads')
+        os.makedirs(UPLOADS_DIR, exist_ok=True)
+
+        # Проверяем, что файлы существуют в папке uploads
+        test_files = {
+            "kitchen.jpg": "kitchen.jpg",
+            "loqiemean-как-у-людеи.mp3": "loqiemean-как-у-людеи.mp3",
+            "loqiemean-потом.mp3": "loqiemean-потом.mp3",
+        }
+
+        for filename in test_files.values():
+            file_path = os.path.join(UPLOADS_DIR, filename)
+            if not os.path.exists(file_path):
+                print(f"Файл {filename} не найден в папке uploads. Пропускаем.")
+            else:
+                print(f"Файл {filename} найден в папке uploads.")
+
+        # Добавляем тестовые проекты
         news1 = News(
-            title="Новость 1",
+            title="Новость с изображением",
             publication_date="2024-01-01",
-            description="Описание новости 1",
-            content="Основной текст новости 1",
-            materials="https://example.com/materials1",
+            description="Описание проекта с изображением",
+            content="Основной текст проекта с изображением",
+            materials="kitchen.jpg",  # Имя файла
             magazine_id=magazine.id
         )
         news1.authors.append(author1)
         news1.authors.append(author2)
 
         news2 = News(
-            title="Новость 2",
+            title="Новость с аудио 1",
             publication_date="2023-06-01",
-            description="Описание новости 2",
-            content="Основной текст новости 2",
-            materials="https://example.com/materials2",
+            description="Описание проекта с аудио 1",
+            content="Основной текст проекта с аудио 1",
+            materials="loqiemean-как-у-людеи.mp3",  # Имя файла
             magazine_id=magazine.id
         )
         news2.authors.append(author3)
 
+        news3 = News(
+            title="Новость с аудио 2",
+            publication_date="2023-12-01",
+            description="Описание проекта с аудио 2",
+            content="Основной текст проекта с аудио 2",
+            materials="loqiemean-потом.mp3",  # Имя файла
+            magazine_id=magazine.id
+        )
+        news3.authors.append(author1)
+
         db.session.add(news1)
         db.session.add(news2)
+        db.session.add(news3)
         db.session.commit()
-        print("Тестовые новости успешно добавлены в базу данных!")
+        print("Тестовые проекты успешно добавлены в базу данных!")
 
 if __name__ == "__main__":
     seed_news()
