@@ -1,11 +1,9 @@
 footer {
     background-color: #1f5724;
     color: white;
-    padding: 1rem 0; /* Уменьшите padding */
+    padding: 1rem 0;
     text-align: center;
-    /* position: fixed;
-    bottom: 0; */
-    /* width: 100%; */
+
     z-index: 1000;
 }
 
@@ -16,16 +14,16 @@ footer {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 1rem; /* Уменьшите padding */
+    padding: 0 1rem;
 }
 
 .footer-section {
-    margin-bottom: 1rem; /* Уменьшите margin */
+    margin-bottom: 1rem;
     flex: 1 1 300px;
 }
 
 .footer-section h2, .footer-section p, .footer-section ul {
-    margin-bottom: 0.5rem; /* Уменьшите margin */
+    margin-bottom: 0.5rem;
 }
 
 .footer-section ul {
@@ -34,7 +32,7 @@ footer {
 }
 
 .footer-section ul li {
-    margin-bottom: 0.5rem; /* Уменьшите margin */
+    margin-bottom: 0.5rem;
     cursor: pointer;
     transition: color 0.3s;
 }
@@ -46,13 +44,13 @@ footer {
 .footer-socials {
     display: flex;
     justify-content: center;
-    margin: 0.5rem 0; /* Уменьшите margin */
+    margin: 0.5rem 0;
 }
 
 .footer-socials a {
-    margin: 0 0.5rem; /* Уменьшите margin */
+    margin: 0 0.5rem;
     color: white;
-    font-size: 1.2rem; /* Уменьшите font-size */
+    font-size: 1.2rem;
     transition: color 0.3s;
 }
 
@@ -61,8 +59,8 @@ footer {
 }
 
 .footer-bottom {
-    margin-top: 1rem; /* Уменьшите margin */
-    font-size: 0.8rem; /* Уменьшите font-size */
+    margin-top: 1rem;
+    font-size: 0.8rem;
 }
 
 /* Адаптивность */
@@ -79,11 +77,11 @@ footer {
 
 @media (max-width: 600px) {
     .footer-container {
-        padding: 0 0.5rem; /* Уменьшите padding */
+        padding: 0 0.5rem;
     }
 
     .footer-socials a {
-        margin: 0 0.25rem; /* Уменьшите margin */
-        font-size: 1rem; /* Уменьшите font-size */
+        margin: 0 0.25rem;
+        font-size: 1rem;
     }
 }

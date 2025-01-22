@@ -19,15 +19,6 @@ const Footer = () => {
                     </ul>
                 </div>
             </div>
-            {/* <div className="footer-socials">
-                <p>Следите за нами в соцсетях</p>
-                <div>
-                    <a href="#"><i className="socicon-facebook"></i></a>
-                    <a href="#"><i className="socicon-instagram"></i></a>
-                    <a href="#"><i className="socicon-tiktok"></i></a>
-                    <a href="#"><i className="socicon-linkedin"></i></a>
-                </div>
-            </div> */}
             <div className="footer-bottom">
                 <p>© 2024 Кардиогенетика. Все права защищены.</p>
             </div>

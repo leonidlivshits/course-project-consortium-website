@@ -20,9 +20,6 @@ const AppRouter = () => {
       <Route path="/news" element={<News />} />
       <Route path="/publications" element={<Publications />} />
       <Route path="/projects" element={<Projects />} />
-      {/* {publicRoutes.map(({ path, Element }) => {
-        return <Route key={path} path={path} element={Element} />;
-      })} */}
       <Route path="/notFound" element={<NoPage />} />
       <Route path="*" element={<Navigate to="/notFound" />} />
     </Routes>
