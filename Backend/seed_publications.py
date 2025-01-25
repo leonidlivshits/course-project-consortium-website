@@ -1,5 +1,6 @@
 # Backend/seed_publications.py
 from app import create_app
+from datetime import datetime
 from app.models import db, Publications, Author, Magazine, publication_authors
 
 app = create_app()
@@ -25,7 +26,7 @@ def seed_publications():
         # Добавляем тестовые публикации
         publication1 = Publications(
             title="Публикация 1",
-            publication_date="2024-01-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             magazine_id=magazine.id,
             annotation="Аннотация публикации 1"
         )
@@ -34,7 +35,7 @@ def seed_publications():
 
         publication2 = Publications(
             title="Публикация 2",
-            publication_date="2023-06-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             magazine_id=magazine.id,
             annotation="Аннотация публикации 2"
         )

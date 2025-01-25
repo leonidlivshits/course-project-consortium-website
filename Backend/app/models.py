@@ -56,7 +56,8 @@ class Event(db.Model):
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    publication_date = db.Column(db.String(50), nullable=False)
+    #publication_date = db.Column(db.String(50), nullable=False)
+    publication_date = db.Column(db.DateTime, nullable=False)
     description = db.Column(db.Text, nullable=False)
     magazine_id = db.Column(db.Integer, db.ForeignKey('magazine.id', ondelete="CASCADE"), nullable=True)
     content = db.Column(db.Text, nullable=False)
@@ -68,7 +69,7 @@ class News(db.Model):
 class Publications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    publication_date = db.Column(db.String(50), nullable=False)
+    publication_date = db.Column(db.DateTime, nullable=False)
     magazine_id = db.Column(db.Integer, db.ForeignKey('magazine.id', ondelete="CASCADE"), nullable=True)
     annotation = db.Column(db.Text, nullable=False)
     authors = db.relationship('Author', secondary=publication_authors, lazy='subquery',
@@ -78,7 +79,8 @@ class Publications(db.Model):
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    publication_date = db.Column(db.String(50), nullable=False)
+    #publication_date = db.Column(db.String(50), nullable=False)
+    publication_date = db.Column(db.DateTime, nullable=False)
     description = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
     materials = db.Column(db.String(300))  # Путь к файлу
