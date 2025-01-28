@@ -25,11 +25,11 @@
 # if __name__ == "__main__":
 #     seed_magazines()
 
-from app import create_app
+#from app import create_app
 from app.models import db, Magazine, News, Publications
 
-def seed_magazines():
-    app = create_app()
+def seed_magazines(app):
+    #app = create_app()
     with app.app_context():
         # Очистка таблиц, связанных с журналами
         db.session.query(News).delete()  # Очищаем таблицу News
@@ -48,5 +48,5 @@ def seed_magazines():
         db.session.commit()
         print("Тестовые журналы успешно добавлены в базу данных!")
 
-if __name__ == "__main__":
-    seed_magazines()
+# if __name__ == "__main__":
+#     seed_magazines()

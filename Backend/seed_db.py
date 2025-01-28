@@ -41,11 +41,11 @@
 # if __name__ == "__main__":
 #     seed_events()
 
-from app import create_app
+#from app import create_app
 from app.models import db, Event
 
-def seed_events():
-    app = create_app()
+def seed_events(app):
+    #app = create_app()
     with app.app_context():
         # Удаляем все существующие события (опционально)
         db.session.query(Event).delete()
@@ -79,5 +79,5 @@ def seed_events():
         db.session.commit()
         print("Тестовые события успешно добавлены в базу данных!")
 
-if __name__ == "__main__":
-    seed_events()
+# if __name__ == "__main__":
+#     seed_events()

@@ -32,18 +32,17 @@ app = create_app()
 def seed_all():
     """Функция для запуска всех скриптов заполнения базы данных."""
     with app.app_context():
-        seed_authors()
-        seed_magazines()
-        seed_events()
-        seed_projects()
-        seed_news()
-        seed_publications()
-        seed_organisations()
+        seed_authors(app)
+        seed_magazines(app)
+        seed_events(app)
+        seed_projects(app)
+        seed_news(app)
+        seed_publications(app)
+        seed_organisations(app)
         print("Все данные успешно добавлены в базу данных!")
 
 if __name__ == '__main__':
-    # Запуск всех скриптов для заполнения базы данных
-    seed_all()
-    
-    # Запуск Flask-приложения
+    import sys
+    if '--seed' in sys.argv:
+        seed_all()
     app.run(host='0.0.0.0', port=5000)

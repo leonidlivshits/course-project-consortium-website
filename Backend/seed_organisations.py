@@ -27,11 +27,11 @@
 # if __name__ == "__main__":
 #     seed_organisations()
 
-from app import create_app
+#from app import create_app
 from app.models import db, Organisation
 
-def seed_organisations():
-    app = create_app()
+def seed_organisations(app):
+    #app = create_app()
     with app.app_context():
         # Удаляем все существующие организации (опционально)
         db.session.query(Organisation).delete()
@@ -51,5 +51,5 @@ def seed_organisations():
         db.session.commit()
         print("Тестовые организации успешно добавлены в базу данных!")
 
-if __name__ == "__main__":
-    seed_organisations()
+# if __name__ == "__main__":
+#     seed_organisations()

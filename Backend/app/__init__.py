@@ -58,16 +58,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
 from flask_cors import CORS
 import logging
-
-# Настройка логгера
-logging.basicConfig(level=logging.ERROR)
-logger = logging.getLogger(__name__)
+from .models import db
+from .config import Config
+from .admin_views import register_admin_views  # Импорт функции
 
 # Инициализация расширений
-db = SQLAlchemy()
+#db = SQLAlchemy()
 mail = Mail()
 migrate = Migrate()
 admin = Admin(name='Admin Panel', template_mode='bootstrap3')
@@ -83,28 +81,16 @@ def create_app():
     migrate.init_app(app, db)
     admin.init_app(app)
 
+    # Регистрация представлений Flask-Admin
+    register_admin_views(admin, db)  # Вызов функции
+
     # Регистрация Blueprint
     from .routes import main
     app.register_blueprint(main)
 
-    # Добавление ModelView для Flask-Admin
-    from .models import Magazine, Author, Contact, Event, News, Publications, Project, Organisation
-    try:
-        admin.add_view(ModelView(Magazine, db.session, name='Magazines', category='Models', endpoint='unique_magazine_admin'))
-        admin.add_view(ModelView(Author, db.session, name='Authors', category='Models', endpoint='unique_author_admin'))
-        admin.add_view(ModelView(Contact, db.session, name='Contacts', category='Models', endpoint='unique_contact_admin'))
-        admin.add_view(ModelView(Event, db.session, name='Events', category='Models', endpoint='unique_event_admin'))
-        admin.add_view(ModelView(News, db.session, name='News', category='Models', endpoint='unique_news_admin'))
-        admin.add_view(ModelView(Publications, db.session, name='Publications', category='Models', endpoint='unique_publications_admin'))
-        admin.add_view(ModelView(Project, db.session, name='Projects', category='Models', endpoint='unique_project_admin'))
-        admin.add_view(ModelView(Organisation, db.session, name='Organisations', category='Models', endpoint='unique_organisation_admin'))
-    except ValueError as e:
-        logger.error(f"Error adding view: {e}")
-        raise
-
     CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
 
     with app.app_context():
-        db.create_all()  # Создаём таблицы, если их нет
+        db.create_all()
 
     return app

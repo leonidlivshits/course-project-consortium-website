@@ -39,12 +39,9 @@
 
 # if __name__ == "__main__":
 #     seed_authors()
-
-from app import create_app
 from app.models import db, Author, news_authors, publication_authors
 
-def seed_authors():
-    app = create_app()
+def seed_authors(app):
     with app.app_context():
         # Очистка промежуточных таблиц перед удалением авторов
         db.session.query(news_authors).delete()  # Очищаем таблицу news_authors
@@ -77,6 +74,3 @@ def seed_authors():
         db.session.add(author3)
         db.session.commit()
         print("Тестовые авторы успешно добавлены в базу данных!")
-
-if __name__ == "__main__":
-    seed_authors()

@@ -75,13 +75,13 @@
 
 # if __name__ == "__main__":
 #     seed_projects()
-
 import os
-from app import create_app
+from datetime import datetime
+#from app import create_app
 from app.models import db, Project, Author, project_authors
 
-def seed_projects():
-    app = create_app()
+def seed_projects(app):
+    #app = create_app()
     with app.app_context():
         # Очистка таблиц Project и project_authors
         db.session.query(project_authors).delete()  # Очищаем промежуточную таблицу
@@ -118,7 +118,7 @@ def seed_projects():
         # Добавляем тестовые проекты
         project1 = Project(
             title="Проект с изображением",
-            publication_date="2024-01-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             description="Описание проекта с изображением",
             content="Основной текст проекта с изображением",
             materials="kitchen.jpg"  # Имя файла
@@ -128,7 +128,7 @@ def seed_projects():
 
         project2 = Project(
             title="Проект с аудио 1",
-            publication_date="2023-06-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             description="Описание проекта с аудио 1",
             content="Основной текст проекта с аудио 1",
             materials="loqiemean-как-у-людеи.mp3"  # Имя файла
@@ -137,7 +137,7 @@ def seed_projects():
 
         project3 = Project(
             title="Проект с аудио 2",
-            publication_date="2023-12-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             description="Описание проекта с аудио 2",
             content="Основной текст проекта с аудио 2",
             materials="loqiemean-потом.mp3"  # Имя файла
@@ -150,5 +150,5 @@ def seed_projects():
         db.session.commit()
         print("Тестовые проекты успешно добавлены в базу данных!")
 
-if __name__ == "__main__":
-    seed_projects()
+# if __name__ == "__main__":
+#     seed_projects()

@@ -134,14 +134,13 @@
 
 # if __name__ == "__main__":
 #     seed_news()
-
-
 import os
-from app import create_app
+from datetime import datetime
+#from app import create_app
 from app.models import db, News, Author, Magazine, news_authors
 
-def seed_news():
-    app = create_app()
+def seed_news(app):
+    #app = create_app()
     with app.app_context():
         # Очистка таблиц News и news_authors
         db.session.query(news_authors).delete()  # Очищаем промежуточную таблицу
@@ -180,7 +179,7 @@ def seed_news():
         # Добавляем тестовые новости
         news1 = News(
             title="Новость с изображением",
-            publication_date="2024-01-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             description="Описание новости с изображением",
             content="Основной текст новости с изображением",
             materials="kitchen.jpg",  # Имя файла
@@ -191,7 +190,7 @@ def seed_news():
 
         news2 = News(
             title="Новость с аудио 1",
-            publication_date="2023-06-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             description="Описание новости с аудио 1",
             content="Основной текст новости с аудио 1",
             materials="loqiemean-как-у-людеи.mp3",  # Имя файла
@@ -201,7 +200,7 @@ def seed_news():
 
         news3 = News(
             title="Новость с аудио 2",
-            publication_date="2023-12-01",
+            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
             description="Описание новости с аудио 2",
             content="Основной текст новости с аудио 2",
             materials="loqiemean-потом.mp3",  # Имя файла
@@ -215,5 +214,5 @@ def seed_news():
         db.session.commit()
         print("Тестовые новости успешно добавлены в базу данных!")
 
-if __name__ == "__main__":
-    seed_news()
+# if __name__ == "__main__":
+#     seed_news()
