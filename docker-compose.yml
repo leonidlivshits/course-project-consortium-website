@@ -1,12 +1,71 @@
-version: '3.8'
+# version: '3.8'
+
+# services:
+#   db:
+#     image: postgres:13
+#     env_file:
+#       - './Backend/app/.env'
+#     environment:
+
+#       POSTGRES_USER: ${POSTGRES_USER}
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+#       POSTGRES_DB: ${POSTGRES_DB}
+
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - backend-network
+#     ports:
+#       - "5432:5432"
+#     healthcheck:
+#       test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 5
+
+#   web:
+#     build:
+#       context: ./Backend
+#     volumes:
+#       - ./Backend:/app
+#     ports:
+#       - "5000:5000"
+#     depends_on:
+#       - db
+#     networks:
+#       - backend-network
+
+#   frontend:
+#     build: ./my-app
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - web
+#     networks:
+#       - backend-network
+
+# volumes:
+#   postgres_data:
+
+# networks:
+#   backend-network:
+#     driver: bridge
+
+
+
+
+#version: '3.8'
 
 services:
   db:
     image: postgres:13
-    env_file:
+    env_file: 
       - './Backend/app/.env'
+    #- 'C:\Users\Марина\source\course-project-consortium-website\Backend\app\.env'
     environment:
-
+      # POSTGRES_USER: cardio_user
+      # POSTGRES_PASSWORD: CardioGenHSE
+      # POSTGRES_DB: cardiogenetics_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
       POSTGRES_DB: ${POSTGRES_DB}
@@ -18,22 +77,36 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 5
 
   web:
-    build:
-      context: ./Backend
-    volumes:
-      - ./Backend:/app
+    build: ./Backend
+    env_file: 
+      - './Backend/app/.env'
     ports:
       - "5000:5000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - backend-network
+
+  admin:
+    build: ./Backend
+    env_file: 
+      - './Backend/app/.env'
+    ports:
+      - "8000:8000"  # Админка будет доступна на порту 8000
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - backend-network
+    #command: ["python", "run.py"]
+    #command: ["/entrypoint.sh"]
 
   frontend:
     build: ./my-app
@@ -50,3 +123,58 @@ volumes:
 networks:
   backend-network:
     driver: bridge
+
+
+# version: '3.8'
+# services:
+#   db:
+#     image: postgres:13
+#     environment:
+#       POSTGRES_USER: cardio_user
+#       POSTGRES_PASSWORD: CardioGenHSE
+#       POSTGRES_DB: cardiogenetics_db
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     networks:
+#       - backend-network
+#     ports:
+#       - "5432:5432"
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U cardio_user -d cardiogenetics_db"]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 5
+#   web:
+#     build: ./Backend
+#     env_file: ./Backend/app/.env
+#     ports:
+#       - "5000:5000"
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     networks:
+#       - backend-network
+#   admin:
+#     build: ./Backend
+#     env_file: ./Backend/app/.env
+#     ports:
+#       - "8000:5000"  # Админка будет доступна на порту 8000
+#     depends_on:
+#       db:
+#         condition: service_healthy
+#     networks:
+#       - backend-network
+#     command: ["python", "run.py"]
+#   frontend:
+#     build: ./my-app
+#     ports:
+#       - "3000:3000"
+#     depends_on:
+#       - web
+#     networks:
+#       - backend-network
+# volumes:
+#   postgres_data:
+# networks:
+#   backend-network:
+#     driver: bridge
