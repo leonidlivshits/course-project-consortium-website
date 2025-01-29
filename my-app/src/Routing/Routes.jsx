@@ -6,6 +6,7 @@ import Events from "../pages/Events/Events.jsx";
 import NoPage from "../pages/NoPage/NoPage.jsx";
 import EventDetail from "../pages/Events/EventDetail.jsx";
 import Projects from "../pages/Projects/Projects.jsx";
+import SearchResults from "../pages/SearchResult/SearchResult";
 
 import {
     MAIN_ROUTE,
@@ -15,7 +16,8 @@ import {
     NO_PAGE_ROUTE,
     PROJECTS_ROUTE,
     EVENTS_ROUTE,
-    EVENT_DETAIL_ROUTE
+    EVENT_DETAIL_ROUTE,
+    SEARCH_RESULSTS_ROUTE
 } from "./const.js";
 
 export const publicRoutes = [
@@ -51,4 +53,8 @@ export const publicRoutes = [
     path: EVENT_DETAIL_ROUTE, // Новый маршрут для деталей событий
     Element: <EventDetail />,
   },
+  {
+    path: SEARCH_RESULSTS_ROUTE,
+    Element: <SearchResults />,
+  }
 ];

@@ -6,3 +6,4 @@ export const NO_PAGE_ROUTE = "/notFound";
 export const PROJECTS_ROUTE = "/projects";
 export const EVENTS_ROUTE = "/events";
 export const EVENT_DETAIL_ROUTE = "/event/:id";
+export const SEARCH_RESULSTS_ROUTE = "/search";
