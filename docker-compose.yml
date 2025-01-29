@@ -99,7 +99,7 @@ services:
     env_file: 
       - './Backend/app/.env'
     ports:
-      - "8000:8000"  # Админка будет доступна на порту 8000
+      - "8000:5000"  # Админка будет доступна на порту 8000
     depends_on:
       db:
         condition: service_healthy
