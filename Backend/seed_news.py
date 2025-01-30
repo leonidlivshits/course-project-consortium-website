@@ -50,7 +50,8 @@ def seed_news(app):
 
         news2 = News(
             title="Новость с аудио 1",
-            publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
+            #publication_date=datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
+            publication_date=datetime.datetime(2005, 7, 14, 12, 30),
             description="Описание новости с аудио 1",
             content="Основной текст новости с аудио 1",
             materials="loqiemean-как-у-людеи.mp3",  # Имя файла
