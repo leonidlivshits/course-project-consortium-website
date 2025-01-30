@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./Projects.css";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
+import { Link } from "react-router-dom";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -72,6 +73,9 @@ const Projects = () => {
               <strong>Материалы:</strong>{" "}
               {project.materials ? renderFile(`http://127.0.0.1:5000${project.materials}`) : "Файл отсутствует"}
             </p>
+            <Link to={`/projects/${project.id}`} state={project} className="project-link">
+              Подробнее
+            </Link>
           </div>
         ))}
       </div>

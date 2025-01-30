@@ -26,7 +26,7 @@ const Events = () => {
             <p><strong>Дата:</strong> {event.date}</p>
             <p><strong>Время:</strong> {event.time}</p>
             <p><strong>Место:</strong> {event.location}</p>
-            <Link to={`/events/${event.title}`} state={event} className="event-link">
+            <Link to={`/events/${event.id}`} state={event} className="event-link">
               Подробнее
             </Link>
           </div>

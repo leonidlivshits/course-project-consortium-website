@@ -4,7 +4,7 @@ import os
 from .models import db, Contact, Event, Project, News, Publications, Organisation, Magazine, Author
 from flask_mail import Message
 from . import mail
-
+from . import serializers
 main = Blueprint('main', __name__)
 
 UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
@@ -157,17 +157,7 @@ def get_news():
     news_1 = News.query.all()
     news_list = []
     for news in news_1:
-        news_list.append({
-            'id': news.id,
-            'title': news.title,
-            'authors': [f"{author.last_name} {author.first_name[0]}.{author.middle_name[0] if author.middle_name else ''}" 
-                        for author in news.authors],
-            'publication_date': news.publication_date,
-            'description': news.description,
-            'magazine': news.magazine.name if news.magazine else None,
-            'content': news.content,
-            'materials': f"/uploads/{news.materials}" #news.materials
-        })
+        news_list.append(serializers.serialize_news(news))
     return jsonify(news_list), 200
 
 # Маршрут для получения всех публикаций
@@ -179,7 +169,7 @@ def get_publications():
         publications_list.append({
             'id': publication.id,
             'title': publication.title,
-            'authors': [f"{author.last_name} {author.first_name[0]}.{author.middle_name[0] if author.middle_name else ''}" 
+            'authors': [serializers.serialize_author(author) 
                         for author in publication.authors],
             'publication_date': publication.publication_date,
             'magazine': publication.magazine.name if publication.magazine else None,
@@ -215,6 +205,40 @@ def get_authors():
                      'last_name': author.last_name, 'middle_name': author.middle_name} 
                     for author in authors]
     return jsonify(authors_list), 200
+
+
+@main.route('/api/events/<int:event_id>', methods=['GET'])
+def get_event_by_id(event_id):
+    event = Event.query.get(event_id)
+    if event:
+        return jsonify({
+            'id': event.id,
+            'title': event.title,
+            'date': event.date,
+            'time': event.time,
+            'location': event.location,
+            'description': event.description
+        }), 200
+    else:
+        return jsonify({'error': 'Событие не найдено'}), 404
+
+
+@main.route('/api/projects/<int:project_id>', methods=['GET'])
+def get_project_by_id(project_id):
+    project = Project.query.get(project_id)
+    if project:
+        return jsonify({
+            'id': project.id,
+            'title': project.title,
+            'publication_date': project.publication_date,
+            'description': project.description,
+            'content': project.content,
+            'materials': project.materials,
+            'authors': [f"{author.last_name} {author.first_name[0]}." for author in project.authors]
+        }), 200
+    else:
+        return jsonify({'error': 'Проект не найден'}), 404
+
 
 # @main.route('/api/search', methods=['GET'])
 # def search():
@@ -263,7 +287,7 @@ def search():
         return jsonify({"error": "Пустой запрос"}), 400
 
     search_pattern = f"%{query}%"  # Поиск подстроки
-
+    #search_pattern = query
     # Поиск по названиям и содержимому
     news_results = News.query.filter(
         (News.title.ilike(search_pattern)) | 
@@ -308,8 +332,8 @@ def search():
     results = {
         "news": [{"id": n.id, "title": n.title} for n in news_results],
         "publications": [{"id": p.id, "title": p.title} for p in publications_results],
-        "projects": [{"id": pr.id, "title": pr.title} for pr in projects_results],
-        "events": [{"id": e.id, "title": e.title} for e in events_results],
+        "projects": [{"id": pr.id, "title": pr.title, "link" : f"/events/{pr.id}"} for pr in projects_results],
+        "events": [{"id": e.id, "title": e.title, "link" : f"/events/{e.id}"} for e in events_results],
         "organisations": [{"id": o.id, "link": o.link} for o in organisations_results],
         "authors": [{"id": a.id, "name": f"{a.last_name} {a.first_name} {a.middle_name or ''}".strip()} for a in authors_results],
         "magazines": [{"id": m.id, "name": m.name} for m in magazines_results]

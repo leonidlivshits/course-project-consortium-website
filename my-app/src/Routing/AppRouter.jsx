@@ -11,6 +11,7 @@ import Projects from "../pages/Projects/Projects";
 import Organisations from "../pages/Organisations/Organisations";
 import SearchResults from "../pages/SearchResult/SearchResult";
 
+import ProjectDetails  from "../pages/Projects/ProjectDetails";
 
 const AppRouter = () => {
   return (
@@ -25,6 +26,8 @@ const AppRouter = () => {
       <Route path="/notFound" element={<NoPage />} />
       <Route path="/search" element={<SearchResults />} />
       <Route path="*" element={<Navigate to="/notFound" />} />
+
+      <Route path="/projects/:id" element={<ProjectDetails />} />
     </Routes>
   );
 };

@@ -7,6 +7,7 @@ import NoPage from "../pages/NoPage/NoPage.jsx";
 import EventDetail from "../pages/Events/EventDetail.jsx";
 import Projects from "../pages/Projects/Projects.jsx";
 import SearchResults from "../pages/SearchResult/SearchResult";
+import ProjectDetails from "../pages/Projects/ProjectDetails.jsx";
 
 import {
     MAIN_ROUTE,
@@ -17,7 +18,8 @@ import {
     PROJECTS_ROUTE,
     EVENTS_ROUTE,
     EVENT_DETAIL_ROUTE,
-    SEARCH_RESULSTS_ROUTE
+    SEARCH_RESULSTS_ROUTE,
+    PROJECT_DETAIL_ROUTE
 } from "./const.js";
 
 export const publicRoutes = [
@@ -56,5 +58,9 @@ export const publicRoutes = [
   {
     path: SEARCH_RESULSTS_ROUTE,
     Element: <SearchResults />,
+  },
+  {
+    path: PROJECT_DETAIL_ROUTE,
+    Element: <ProjectDetails />
   }
 ];
