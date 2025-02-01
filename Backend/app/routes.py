@@ -41,14 +41,7 @@ def get_events():
     events = Event.query.all()
     events_list = []
     for event in events:
-        events_list.append({
-            'id': event.id,
-            'title': event.title,
-            'date': event.date,
-            'time': event.time,
-            'location': event.location,
-            'description': event.description
-        })
+        events_list.append(serializers.serialize_events(event))
     return jsonify(events_list), 200
 
 # Маршрут для создания проекта
@@ -93,15 +86,7 @@ def get_projects():
     projects = Project.query.all()
     projects_list = []
     for project in projects:
-        projects_list.append({
-            'id': project.id,
-            'title': project.title,
-            'authors': [f"{author.last_name} {author.first_name[0]}." for author in project.authors],
-            'publication_date': project.publication_date,
-            'description': project.description,
-            'content': project.content,
-            'materials': f"/uploads/{project.materials}"  # Путь к файлу
-        })
+        projects_list.append(serializers.serialize_projects(project))
     return jsonify(projects_list), 200
 
 # Маршрут для отдачи файлов
@@ -154,40 +139,28 @@ def create_news():
 # Маршрут для получения всех новостей
 @main.route('/api/news', methods=['GET'])
 def get_news():
-    news_1 = News.query.all()
+    all_news = News.query.all()
     news_list = []
-    for news in news_1:
+    for news in all_news:
         news_list.append(serializers.serialize_news(news))
     return jsonify(news_list), 200
 
 # Маршрут для получения всех публикаций
 @main.route('/api/publications', methods=['GET'])
 def get_publications():
-    publications_1 = Publications.query.all()
+    all_publications = Publications.query.all()
     publications_list = []
-    for publication in publications_1:
-        publications_list.append({
-            'id': publication.id,
-            'title': publication.title,
-            'authors': [serializers.serialize_author(author) 
-                        for author in publication.authors],
-            'publication_date': publication.publication_date,
-            'magazine': publication.magazine.name if publication.magazine else None,
-            'annotation': publication.annotation
-        })
+    for publication in all_publications:
+        publications_list.append(serializers.serialize_publications(publication))
     return jsonify(publications_list), 200
 
 # Маршрут для получения всех организаций
 @main.route('/api/organisations', methods=['GET'])
 def get_organisations():
-    organisations_1 = Organisation.query.all()
+    all_organisations = Organisation.query.all()
     organisations_list = []
-    for organisation in organisations_1:
-        organisations_list.append({
-            'id': organisation.id,
-            'image': organisation.image,
-            'link': organisation.link
-        })
+    for organisation in all_organisations:
+        organisations_list.append(serializers.serialize_organisations(organisation))
     return jsonify(organisations_list), 200
 
 # Маршрут для получения всех журналов
@@ -211,14 +184,9 @@ def get_authors():
 def get_event_by_id(event_id):
     event = Event.query.get(event_id)
     if event:
-        return jsonify({
-            'id': event.id,
-            'title': event.title,
-            'date': event.date,
-            'time': event.time,
-            'location': event.location,
-            'description': event.description
-        }), 200
+        return jsonify(
+            serializers.serialize_events(event)
+            ), 200
     else:
         return jsonify({'error': 'Событие не найдено'}), 404
 
@@ -227,17 +195,43 @@ def get_event_by_id(event_id):
 def get_project_by_id(project_id):
     project = Project.query.get(project_id)
     if project:
-        return jsonify({
-            'id': project.id,
-            'title': project.title,
-            'publication_date': project.publication_date,
-            'description': project.description,
-            'content': project.content,
-            'materials': project.materials,
-            'authors': [f"{author.last_name} {author.first_name[0]}." for author in project.authors]
-        }), 200
+        return jsonify(
+            serializers.serialize_projects(project)
+            ), 200
     else:
         return jsonify({'error': 'Проект не найден'}), 404
+    
+@main.route('/api/publications/<int:publication_id>', methods=['GET'])
+def get_publication_by_id(publication_id):
+    publication = Publications.query.get(publication_id)
+    if publication:
+        return jsonify(
+            serializers.serialize_publications(publication)
+            ), 200
+    else:
+        return jsonify({'error': 'Публикация не найдена'}), 404
+    
+@main.route('/api/news/<int:news_id>', methods=['GET'])
+def get_news_by_id(news_id):
+    news = News.query.get(news_id)
+    if news:
+        return jsonify(
+            serializers.serialize_news(news)
+            ), 200
+    else:
+        return jsonify({'error': 'Новость не найдена'}), 404
+    
+@main.route('/api/organisations/<int:organisation_id>', methods=['GET'])
+def get_organisation_by_id(organisation_id):
+    organisation = Organisation.query.get(organisation_id)
+    if organisation:
+        return jsonify(
+            serializers.serialize_organisations(organisation)
+            ), 200
+    else:
+        return jsonify({'error': 'Организация не найдена'}), 404
+    
+
 
 
 # @main.route('/api/search', methods=['GET'])
@@ -330,11 +324,11 @@ def search():
 
     # Формируем JSON-ответ
     results = {
-        "news": [{"id": n.id, "title": n.title} for n in news_results],
-        "publications": [{"id": p.id, "title": p.title} for p in publications_results],
-        "projects": [{"id": pr.id, "title": pr.title, "link" : f"/events/{pr.id}"} for pr in projects_results],
+        "news": [{"id": n.id, "title": n.title, "link" : f"/news/{n.id}"} for n in news_results],
+        "publications": [{"id": p.id, "title": p.title, "link" : f"/publications/{p.id}"} for p in publications_results],
+        "projects": [{"id": pr.id, "title": pr.title, "link" : f"/projects/{pr.id}"} for pr in projects_results],
         "events": [{"id": e.id, "title": e.title, "link" : f"/events/{e.id}"} for e in events_results],
-        "organisations": [{"id": o.id, "link": o.link} for o in organisations_results],
+        "organisations": [{"id": o.id, "link": o.link, "link" : f"/organisations/{o.id}"} for o in organisations_results],
         "authors": [{"id": a.id, "name": f"{a.last_name} {a.first_name} {a.middle_name or ''}".strip()} for a in authors_results],
         "magazines": [{"id": m.id, "name": m.name} for m in magazines_results]
     }
