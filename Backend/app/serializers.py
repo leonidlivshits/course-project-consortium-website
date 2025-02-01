@@ -19,4 +19,39 @@ def serialize_news(news : News):
             'content': news.content,
             'materials': f"/uploads/{news.materials}" 
         }
-    
+def serialize_events(event : Event):
+    return {
+            'id': event.id,
+            'title': event.title,
+            'date': event.date,
+            'time': event.time,
+            'location': event.location,
+            'description': event.description
+        }
+def serialize_projects(project : Project):
+    return {
+            'id': project.id,
+            'title': project.title,
+            'authors': [serialize_author(author) 
+                        for author in project.authors],
+            'publication_date': project.publication_date,
+            'description': project.description,
+            'content': project.content,
+            'materials': f"/uploads/{project.materials}"
+        }
+def serialize_publications(publication : Publications):
+    return {
+            'id': publication.id,
+            'title': publication.title,
+            'authors': [serialize_author(author) 
+                        for author in publication.authors],
+            'publication_date': publication.publication_date,
+            'magazine': publication.magazine.name if publication.magazine else None,
+            'annotation': publication.annotation
+        }
+def serialize_organisations(organisation : Organisation):
+    return {
+            'id': organisation.id,
+            'image': organisation.image,
+            'link': organisation.link
+        }
