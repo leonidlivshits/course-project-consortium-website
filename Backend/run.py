@@ -20,7 +20,7 @@ def seed_test_scrypts():
         # seed_news(app)
         # seed_publications(app)
         # seed_organisations(app)
-        print("Все данные успешно добавлены в базу данных!")
+        #print("Все данные успешно добавлены в базу данных!")
 
 if __name__ == '__main__':
     import sys
