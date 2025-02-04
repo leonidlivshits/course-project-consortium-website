@@ -7,5 +7,6 @@ export const PROJECTS_ROUTE = "/projects";
 export const EVENTS_ROUTE = "/events";
 export const EVENT_DETAIL_ROUTE = "/event/:id";
 export const SEARCH_RESULSTS_ROUTE = "/search";
-
+export const NEWS_DETAIL_ROUTE = "/news/:id";
+export const PUBLICATION_DETAIL_ROUTE = "/publications/:id";
 export const PROJECT_DETAIL_ROUTE = "/projects/:id";
