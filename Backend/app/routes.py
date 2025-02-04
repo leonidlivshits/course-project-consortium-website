@@ -5,6 +5,7 @@ from .models import db, Contact, Event, Project, News, Publications, Organisatio
 from flask_mail import Message
 from . import mail
 from . import serializers
+import logging
 main = Blueprint('main', __name__)
 
 UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
@@ -31,7 +32,12 @@ def create_contact():
         recipients=['maxweinsberg25@gmail.com'],
         body=f"Имя: {data['name']}\nEmail: {data['email']}\nТелефон: {data['phone']}\nКомпания: {data.get('company')}\nСообщение: {data['message']}"
     )
-    mail.send(msg)
+    try:
+        mail.send(msg)
+        return jsonify({'message': 'Сообщение отправлено успешно!'}), 201
+    except Exception as e:
+        logging.error(f"Ошибка при отправке email: {e}")
+        return jsonify({'error': 'Не удалось отправить сообщение'}), 500
 
     return jsonify({'message': 'Сообщение отправлено успешно!'}), 201
 
