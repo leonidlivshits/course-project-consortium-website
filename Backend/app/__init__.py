@@ -7,10 +7,9 @@ from flask_cors import CORS
 import logging
 from .models import db
 from .config import Config
-from .admin_views import register_admin_views  # Импорт функции
+from .admin_views import register_admin_views 
 
 # Инициализация расширений
-#db = SQLAlchemy()
 mail = Mail()
 migrate = Migrate()
 admin = Admin(name='Admin Panel', template_mode='bootstrap3')

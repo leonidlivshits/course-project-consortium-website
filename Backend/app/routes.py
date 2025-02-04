@@ -238,45 +238,6 @@ def get_organisation_by_id(organisation_id):
         return jsonify({'error': 'Организация не найдена'}), 404
     
 
-
-
-# @main.route('/api/search', methods=['GET'])
-# def search():
-#     query = request.args.get('q', '').strip()
-    
-#     if not query:
-#         return jsonify({"error": "Пустой запрос"}), 400
-
-#     # Используем ILIKE для поиска подстроки без учета регистра
-#     search_pattern = f"%{query}%"
-
-#     # Выполняем поиск по всем таблицам
-#     news_results = News.query.filter(News.title.ilike(search_pattern)).all()
-#     publications_results = Publications.query.filter(Publications.title.ilike(search_pattern)).all()
-#     projects_results = Project.query.filter(Project.title.ilike(search_pattern)).all()
-#     events_results = Event.query.filter(Event.title.ilike(search_pattern)).all()
-#     organisations_results = Organisation.query.filter(Organisation.link.ilike(search_pattern)).all()
-
-#     # Формируем JSON-ответ
-#     results = {
-#         "news": [{"id": n.id, "title": n.title} for n in news_results],
-#         "publications": [{"id": p.id, "title": p.title} for p in publications_results],
-#         "projects": [{"id": pr.id, "title": pr.title} for pr in projects_results],
-#         "events": [{"id": e.id, "title": e.title} for e in events_results],
-#         "organisations": [{"id": o.id, "link": o.link} for o in organisations_results],
-#     }
-
-#     return jsonify(results)
-
-
-
-
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-
 @main.route('/api/search', methods=['GET'])
 def search():
     query = request.args.get('q', '').strip()
@@ -287,7 +248,6 @@ def search():
         return jsonify({"error": "Пустой запрос"}), 400
 
     search_pattern = f"%{query}%"  # Поиск подстроки
-    #search_pattern = query
     # Поиск по названиям и содержимому
     news_results = News.query.filter(
         (News.title.ilike(search_pattern)) | 

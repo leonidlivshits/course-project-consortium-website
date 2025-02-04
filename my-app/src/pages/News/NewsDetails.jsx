@@ -5,27 +5,26 @@ import { useParams } from 'react-router-dom';
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 
-const ProjectDetails = () => {
-  const { id } = useParams(); // Извлекаем id из URL
-  const [project, setProject] = useState(null);
+const NewsDetails = () => {
+  const { id } = useParams();
+  const [news, setNews] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Запрашиваем данные о проекте с бэкенда по его ID
-    fetch(`http://127.0.0.1:5000/api/projects/${id}`)
+    fetch(`http://127.0.0.1:5000/api/news/${id}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Проект не найден');
+          throw new Error('Новость не найдена');
         }
         return response.json();
       })
       .then(data => {
-        setProject(data);
+        setNews(data);
         setLoading(false);
       })
       .catch(error => {
-        console.error('Ошибка при загрузке проекта:', error);
+        console.error('Ошибка при загрузке новости:', error);
         setError(error.message);
         setLoading(false);
       });
@@ -39,22 +38,24 @@ const ProjectDetails = () => {
     return <div>Ошибка: {error}</div>;
   }
 
-  if (!project) {
-    return <div>Проект не найден</div>;
+  if (!news) {
+    return <div>Новость не найдена</div>;
   }
 
   return (
     <section className="project-details">
       <Navbar />
       <div className="container">
-        <h2>{project.title}</h2>
-        <p><strong>Дата публикации:</strong> {project.publication_date}</p>
-        <p><strong>Описание:</strong> {project.description}</p>
-        <p><strong>Содержание:</strong> {project.content}</p>
-        {project.materials && (
+        <h2>{news.title}</h2>
+        <p><strong>Авторы:</strong> {news.authors.join(', ')}</p>
+        <p><strong>Дата публикации:</strong> {news.publication_date}</p>
+        <p><strong>Описание:</strong> {news.description}</p>
+        <p><strong>Журнал:</strong> {news.magazine || "Не указан"}</p>
+        <p><strong>Текст:</strong> {news.content}</p>
+        {news.materials && (
           <p>
             <strong>Материалы:</strong>{" "}
-            <a href={`/uploads/${project.materials}`} download>
+            <a href={`/uploads/${news.materials}`} download>
               Скачать
             </a>
           </p>
@@ -65,4 +66,4 @@ const ProjectDetails = () => {
   );
 };
 
-export default ProjectDetails;
+export default NewsDetails;
