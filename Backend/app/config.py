@@ -37,10 +37,10 @@ class Config:
     'MAIL_PORT',
     )
     MAIL_USERNAME = os.environ.get(
-    'SQLALCHEMY_DATABASE_URI',
+    'MAIL_USERNAME',
     )
     MAIL_PASSWORD = os.environ.get(
-    'SQLALCHEMY_DATABASE_URI',
+    'MAIL_PASSWORD',
     )
     MAIL_USE_TLS = os.environ.get(
     'MAIL_USE_TLS',
