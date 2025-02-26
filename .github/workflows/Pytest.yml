@@ -32,7 +32,12 @@ jobs:
       run: |
         source venv/bin/activate
         pip install -r requirements.txt
+        pip install Flask-Mail
+        pip install Flask-Cors
+        pip install Flask-Admin
+        pip install Flask-BasicAuth
         pip install pytest pytest-cov
+        
 
     # Запуск тестов
     - name: Run tests
