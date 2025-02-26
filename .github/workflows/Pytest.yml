@@ -1,46 +1,48 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
 name: Pytest
-
 on: [push, pull_request]
-
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.12", "3.13"]
+
     steps:
     - uses: actions/checkout@v4
+
+    # Перейти в директорию Backend
+    - name: Change directory to Backend
+      run: |
+        cd Backend
+
+    # Установка Python
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+
+    # Создание виртуального окружения
     - name: Create virtual environment
       run: |
+        cd Backend  # Перейти в Backend перед созданием окружения
         python -m venv venv
         source venv/bin/activate
         pip install --upgrade pip
 
-    # Установка зависимостей
+    # Установка зависимостей из requirements.txt в Backend
     - name: Install dependencies
       run: |
+        cd Backend  # Перейти в Backend перед установкой зависимостей
         source venv/bin/activate
         pip install -r requirements.txt
-        pip install Flask-Mail
-        pip install Flask-Cors
-        pip install Flask-Admin
-        pip install Flask-BasicAuth
-        pip install pytest pytest-cov
-        
 
-    # Запуск тестов
+    # Запуск тестов с покрытием
     - name: Run tests
       run: |
+        cd Backend  # Перейти в Backend перед запуском тестов
         source venv/bin/activate
-        pytest -s --cov --cov-report html --cov-fail-under 85
+        pytest -s --cov=Backend --cov-report html --cov-fail-under 85
