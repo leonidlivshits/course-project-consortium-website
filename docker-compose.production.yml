@@ -24,6 +24,8 @@ services:
     image: leonidlivshitz/course-project-consortium-backend
     env_file: 
       - './Backend/.env'
+    volumes:
+      - ./course-project-consortium-website/Backend/uploads:/app/uploads
     ports:
       - "5000:80"
     depends_on: 
