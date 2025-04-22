@@ -15,12 +15,12 @@ from enum import Enum, auto
 from sqlalchemy import or_
 main = Blueprint('main', __name__)
 
-# UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
-# os.makedirs(UPLOADS_DIR, exist_ok=True)
-
-BASEDIR = os.path.abspath(os.path.dirname(__file__))
-UPLOADS_DIR = os.path.join(BASEDIR, 'uploads')
+UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
 os.makedirs(UPLOADS_DIR, exist_ok=True)
+
+# BASEDIR = os.path.abspath(os.path.dirname(__file__))
+# UPLOADS_DIR = os.path.join(BASEDIR, 'uploads')
+# os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 from flask_mail import Message
 
