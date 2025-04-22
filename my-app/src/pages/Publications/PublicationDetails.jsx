@@ -69,13 +69,6 @@ const PublicationDetails = () => {
         <p><strong>{language === 'ru' ? 'Описание: ' : 'Abstract: '}</strong> 
         {publication[`annotation_${language}`] || publication.annotation}
         </p>
-            {/* <Link 
-              to={`/publications/${publication.id}`} 
-              state={publication} 
-              className="publication-link"
-            >
-              {language === 'ru' ? 'Подробнее' : 'Read more'}
-            </Link> */}
       </div>
       <Footer />
     </section>

@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 import { LanguageContext } from "../../components/LanguageContext/LanguageContext";
 
 const Footer = () => {
-    const { language } = useContext(LanguageContext);
-    
+    const { language } = useContext(LanguageContext);    
 
     return (
         <footer className="footer">
@@ -17,9 +16,8 @@ const Footer = () => {
                 </div>
                 <div className="footer-section">
                     <ul>
-                        <li>{language === 'ru' ? 'Поддержка' : 'Support'}</li>
-                        <li>{language === 'ru' ? 'О нас' : 'About us'}</li>
-                        <li>{language === 'ru' ? 'Контакты' : 'Contacts'}</li>
+                        <li><Link to="https://t.me/Leo_Livshitz" className='contact-link'>{language === 'ru' ? 'Поддержка' : 'Support'}</Link></li>
+                        <li><Link to="https://t.me/Mister_V_1" className='contact-link'>{language === 'ru' ? 'О нас' : 'About us'}</Link></li>
                     </ul>
                 </div>
             </div>

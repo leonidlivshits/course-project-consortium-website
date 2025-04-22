@@ -86,13 +86,8 @@ const Projects = () => {
             </p>
             <p>
               <strong>{language === 'ru' ? 'Материалы: ' : 'Materials: '}</strong>{" "}
-              {/* renderFile(`${process.env.REACT_APP_API_URL}/${news.materials} */}
-              {/* {project.materials ? renderFile(`${process.env.REACT_APP_API_URL}/${projects.materials}`) : "Файл отсутствует"} */}
               {project.materials ? renderFile(`${process.env.REACT_APP_API_URL}/${project.materials}`) : "Файл отсутствует"}
             </p>
-            {/* <Link to={`/projects/${project.id}`} state={project} className="project-link">
-              Подробнее
-            </Link> */}
             <Link 
               to={`/projects/${project.id}`} 
               state={project} 

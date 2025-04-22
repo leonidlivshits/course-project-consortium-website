@@ -11,7 +11,6 @@ const AuthorFilter = ({ onApply }) => {
 
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_URL}/authors`)
-    // ${process.env.REACT_APP_API_URL}/news
       .then(res => res.json())
       .then(data => setAuthors(data))
       .catch(console.error);

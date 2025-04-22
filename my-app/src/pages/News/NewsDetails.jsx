@@ -99,14 +99,6 @@ const NewsDetails = () => {
     <section className="event-detail">
       <Navbar />
       <div className="container">
-        {/* {news.materials && (
-          <p>
-            <strong>Материалы:</strong>{" "}
-            <Link to={`/uploads/${news.materials}`} download>
-              Скачать
-            </Link>
-          </p>
-        )}  */}
       <h2>{news[`title_${language}`] || news.title}</h2>
       <p><strong>{language === 'ru' ? 'Авторы: ' : 'Authors: '}</strong> {formatAuthors(news.authors)}</p>
       <p><strong>{language === 'ru' ? 'Дата публикации: ' : 'Publication Date: '}</strong> 
@@ -129,9 +121,6 @@ const NewsDetails = () => {
         <strong>{language === 'ru' ? 'Материалы: ' : 'Materials: '}</strong>{" "}
         {news.materials ? renderFile(`${process.env.REACT_APP_API_URL}${encodeURIComponent(news.materials)}`) : language === 'ru' ? 'Файл отсутствует' : 'No file'}
       </p>
-      {/* <Link to={`/news/${news.id}`} state={news} className="news-link">
-        {language === 'ru' ? 'Узнать больше' : 'Read more'}            
-      </Link> */}
       </div>
       <Footer />
     </section>

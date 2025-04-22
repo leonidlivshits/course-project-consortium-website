@@ -99,14 +99,6 @@ const ProjectDetails = () => {
     <section className="event-detail">
       <Navbar />
       <div className="container">
-        {/*{project.materials && (
-          <p>
-            <strong>Материалы:</strong>{" "}
-            <Link to={`/uploads/${project.materials}`} download>
-              Скачать
-            </Link>
-          </p>
-        )} */}
       <h2>{project[`title_${language}`] || project.title}</h2>
       <p><strong>{language === 'ru' ? 'Авторы: ' : 'Authors: '}</strong> {formatAuthors(project.authors)}</p>
       <p><strong>{language === 'ru' ? 'Дата публикации: ' : 'Publication Date: '}</strong> 
@@ -120,21 +112,8 @@ const ProjectDetails = () => {
       </p>
       <p>
         <strong>{language === 'ru' ? 'Материалы: ' : 'Materials: '}</strong>{" "}
-        {/* <Link to={`/uploads/${project.materials}`} download>
-        {language === 'ru' ? 'Скачать' : 'Dowload'}
-        </Link> */}
           {project.materials ? renderFile(`${process.env.REACT_APP_API_URL}/${project.materials}`) : "Файл отсутствует"}
       </p>
-      {/* <Link to={`/projects/${project.id}`} state={project} className="project-link">
-        Подробнее
-      </Link> */}
-      {/* <Link 
-        to={`/projects/${project.id}`} 
-        state={project} 
-        className="project-link"
-      >
-        {language === 'ru' ? 'Подробнее' : 'Read more'}
-      </Link> */}
       </div>
       <Footer />
     </section>
