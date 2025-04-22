@@ -73,14 +73,12 @@ def serialize_publications(publication: Publications):
     }
 
 def serialize_organisations(organisation: Organisation):
-    # Без изменений, так как нет переводимых полей
     return {
         'id': organisation.id,
         'image': organisation.image,
         'link': organisation.link
     }
 
-# Добавим сериализатор для журналов, если он нужен
 def serialize_magazine(magazine: Magazine):
     return {
         'id': magazine.id,

@@ -1,8 +1,6 @@
 
 FROM tiangolo/uwsgi-nginx-flask:python3.12
 
-# COPY ./prestart.sh /app/prestart.sh
-# RUN chmod +x /app/prestart.sh
 
 COPY ./requirements.txt ./requirements.txt
 
