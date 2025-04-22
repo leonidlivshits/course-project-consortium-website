@@ -11,7 +11,6 @@ def test_translate_to_english_empty_or_non_string():
 def test_translate_to_english_successful_translation():
     mock_translator = MagicMock()
     mock_translator.translate.return_value = "Translated text"
-    #mock_get_cached.return_value = None
 
     result = translate_to_english("Текст", mock_translator)
     assert result == "Translated text"
@@ -21,7 +20,6 @@ def test_translate_to_english_successful_translation():
 def test_translate_to_english_error():
     mock_translator = MagicMock()
     mock_translator.translate.side_effect = Exception("Error")
-    #mock_get_cached.return_value = None
 
     result = translate_to_english("Ошибка", mock_translator)
     assert result == "Ошибка"

@@ -1,6 +1,5 @@
 import datetime
 from unittest.mock import patch
-# Backend/testing/test_app/test_serializers.py
 from app.serializers import (
     serialize_author,
     serialize_news,
@@ -92,11 +91,6 @@ class TestProjectSerializer:
         result = serialize_projects(sample_project)
         assert result["materials"] == "/uploads/loqiemean-как-у-людеи.mp3"
 
-# class TestPublicationSerializer:
-#     @patch("app.utils.get_current_language", return_value="ru")
-#     def test_serialize_publication_authors(self, mock_get_current_language, sample_publication):
-#         result = serialize_publications(sample_publication)
-#         assert set(result["authors"]) == {"Иванов И.И.", "Петров П."}
 
 class TestOrganisationSerializer:
     def test_serialize_organisation(self, sample_organisation):

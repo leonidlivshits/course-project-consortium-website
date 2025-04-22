@@ -8,7 +8,6 @@ from .models import db, Contact, Event, Project, News, Publications, Organisatio
 from flask_mail import Message
 from . import mail
 from . import serializers
-#from .utils import get_current_language
 import logging
 from datetime import datetime
 from enum import Enum, auto
@@ -18,9 +17,6 @@ main = Blueprint('main', __name__)
 UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
-# BASEDIR = os.path.abspath(os.path.dirname(__file__))
-# UPLOADS_DIR = os.path.join(BASEDIR, 'uploads')
-# os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 from flask_mail import Message
 
@@ -42,7 +38,6 @@ def uploaded_file(filename):
 #     filename = secure_filename(file.filename)
 #     save_path = os.path.join(UPLOADS_DIR, filename)
     
-#     # Быстрая потоковая запись
 #     with open(save_path, 'wb') as f:
 #         chunk_size = 4096
 #         while True:
@@ -67,10 +62,8 @@ def send_email(subject, sender, recipients, body):
         return False
 
 
-
 @main.route('/api/contact', methods=['POST'])
 def create_contact():
-    #print("create_contact --------------------------------------")
     data = request.get_json()
 
     # Проверка обязательных полей
@@ -111,7 +104,6 @@ def create_contact():
         logging.error(f"Database error: {e}")
         return jsonify({'error': 'Database error occurred'}), 500
 
-    # Отправка email
     try:
         subject = f'Новое сообщение от {data["name"]}'
         body = f"""Имя: {data['name']}
@@ -129,87 +121,42 @@ Email: {normalized_email}
         logging.error(f"Email sending error: {e}")
         return jsonify({'error': 'Сообщение сохранено, но не отправлено'}), 500
 
-# @main.route('/api/contact', methods=['POST'])
-# def create_contact():
-#     print("create_contact --------------------------------------")
-#     data = request.get_json()
 
-#     # Проверка валидности email
-#     try:
-#         email_info = validate_email(data['email'], check_deliverability=False)
-#         data['email'] = email_info.normalized
-#     except EmailNotValidError as e:
-#         logging.error(f"Email validation error: {e}")
-#         return jsonify({'error': 'Invalid email address provided.'}), 400
-#     except IntegrityError as e:
-#         db.session.rollback()
-#         logging.error(f"Duplicate entry: {e}")
-#         return jsonify({'error': 'Сообщение с этого email уже отправлено'}), 409
-#     except Exception as e:
-#         db.session.rollback()
-#         logging.error(f"Error: {e}")
-#         return jsonify({'error': 'Internal server error'}), 500
-
-#     new_contact = Contact(
-#         name=data['name'],
-#         email=data['email'],
-#         phone=data['phone'],
-#         company=data.get('company'),
-#         message=data['message']
-#     )
-#     db.session.add(new_contact)
-#     db.session.commit()
-
-#     # Отправка email
-#     subject = f'Новое сообщение от {data["name"]}'
-#     body = f"Имя: {data['name']}\nEmail: {data['email']}\nТелефон: {data['phone']}\nКомпания: {data.get('company')}\nСообщение: {data['message']}"
-#     if send_email(subject, data['email'], ['maxweinsberg25@gmail.com'], body):
-#         return jsonify({'message': 'Сообщение отправлено успешно!'}), 201
-#     else:
-#         return jsonify({'error': 'Не удалось отправить сообщение'}), 200
-
-
-# Маршрут для получения всех событий
 @main.route('/api/events', methods=['GET'])
 def get_events():
-    events = db.session.scalars(sa_select(Event)).all()  # ЗАМЕНА: query.all() -> session.scalars(select(...)).all()
+    events = db.session.scalars(sa_select(Event)).all()
     events_list = []
     for event in events:
         events_list.append(serializers.serialize_events(event))
     return jsonify(events_list), 200
 
 
-# Маршрут для получения события по ID
-@main.route('/api/events/<int:event_id>', methods=['GET'])  # Добавил <int:event_id> для корректного маршрута
+@main.route('/api/events/<int:event_id>', methods=['GET'])
 def get_event_by_id(event_id):
-    event = db.session.get(Event, event_id)  # ЗАМЕНА: query.get() -> session.get()
+    event = db.session.get(Event, event_id)
     if event:
         return jsonify(serializers.serialize_events(event)), 200
     else:
         return jsonify({'error': 'Событие не найдено'}), 404
 
 
-# Маршрут для получения всех проектов
 @main.route('/api/projects', methods=['GET'])
 def get_projects():
-    projects = db.session.scalars(sa_select(Project)).all()  # ЗАМЕНА: query.all() -> session.scalars(select(...)).all()
+    projects = db.session.scalars(sa_select(Project)).all()
     projects_list = []
     for project in projects:
         projects_list.append(serializers.serialize_projects(project))
     return jsonify(projects_list), 200
 
-
-# Маршрут для получения проекта по ID
-@main.route('/api/projects/<int:project_id>', methods=['GET'])  # Добавил <int:project_id> для корректного маршрута
+@main.route('/api/projects/<int:project_id>', methods=['GET'])
 def get_project_by_id(project_id):
-    project = db.session.get(Project, project_id)  # ЗАМЕНА: query.get() -> session.get()
+    project = db.session.get(Project, project_id)
     if project:
         return jsonify(serializers.serialize_projects(project)), 200
     else:
         return jsonify({'error': 'Проект не найден'}), 404
 
 
-# Маршрут для получения всех новостей
 @main.route('/api/news', methods=['GET'])
 def get_news():
     all_news = db.session.scalars(sa_select(News)).all()
@@ -219,7 +166,6 @@ def get_news():
     return jsonify(news_list), 200
 
 
-# Маршрут для получения новости по ID
 @main.route('/api/news/<int:news_id>', methods=['GET'])
 def get_news_by_id(news_id):
     news = db.session.get(News, news_id)
@@ -229,7 +175,6 @@ def get_news_by_id(news_id):
         return jsonify({'error': 'Новость не найдена'}), 404
 
 
-# Маршрут для получения всех публикаций
 @main.route('/api/publications', methods=['GET'])
 def get_publications():
     all_publications = db.session.scalars(sa_select(Publications)).all() 
@@ -239,37 +184,33 @@ def get_publications():
     return jsonify(publications_list), 200
 
 
-# Маршрут для получения публикации по ID
-@main.route('/api/publications/<int:publication_id>', methods=['GET'])  # Добавил <int:publication_id> для корректного маршрута
+@main.route('/api/publications/<int:publication_id>', methods=['GET'])
 def get_publication_by_id(publication_id):
-    publication = db.session.get(Publications, publication_id)  # ЗАМЕНА: query.get() -> session.get()
+    publication = db.session.get(Publications, publication_id)
     if publication:
         return jsonify(serializers.serialize_publications(publication)), 200
     else:
         return jsonify({'error': 'Публикация не найдена'}), 404
 
 
-# Маршрут для получения всех организаций
+
 @main.route('/api/organisations', methods=['GET'])
-#@basic_auth.required
 def get_organisations():
-    all_organisations = db.session.scalars(sa_select(Organisation)).all()  # ЗАМЕНА: query.all() -> session.scalars(select(...)).all()
+    all_organisations = db.session.scalars(sa_select(Organisation)).all()
     organisations_list = []
     for organisation in all_organisations:
         organisations_list.append(serializers.serialize_organisations(organisation))
     return jsonify(organisations_list), 200
 
 
-# Маршрут для получения организации по ID
-@main.route('/api/organisations/<int:organisation_id>', methods=['GET'])  # Добавил <int:organisation_id> для корректного маршрута
+
+@main.route('/api/organisations/<int:organisation_id>', methods=['GET'])
 def get_organisation_by_id(organisation_id):
-    organisation = db.session.get(Organisation, organisation_id)  # ЗАМЕНА: query.get() -> session.get()
+    organisation = db.session.get(Organisation, organisation_id)
     if organisation:
         return jsonify(serializers.serialize_organisations(organisation)), 200
     else:
         return jsonify({'error': 'Организация не найдена'}), 404
-
-
 
 
 @main.route('/api/magazines/<int:magazine_id>', methods=['GET']) 
@@ -311,10 +252,10 @@ def get_and_sort_results(model, filters, sort_key=None, reverse=False):
     return results
 
 class SortType(Enum):
-    ALPHABETICAL = auto()  # Сортировка по алфавиту
-    REVERSE_ALPHABETICAL = auto()  # Сортировка в обратном алфавитном порядке
-    DATE_ASC = auto()  # Сортировка по дате (по возрастанию)
-    DATE_DESC = auto()  # Сортировка по дате (по убыванию)
+    ALPHABETICAL = auto()
+    REVERSE_ALPHABETICAL = auto()
+    DATE_ASC = auto()
+    DATE_DESC = auto()
 
 def get_sort_params(sort_type):
     sort_mapping = {
@@ -403,32 +344,14 @@ def search():
     reverse = sort_params["reverse"]
     search_pattern = query #f"%{query}%"
 
-    # Получаем базовые фильтры через отдельную функцию
+
     base_filters = build_filters(search_pattern, authors, magazines, date_from, date_to)
 
-    # Получение результатов с использованием корректных фильтров
     news_results = get_and_sort_results(News, base_filters["news"], sort_key=sort_key, reverse=reverse)
     publications_results = get_and_sort_results(Publications, base_filters["publications"], sort_key=sort_key, reverse=reverse)
     events_results = get_and_sort_results(Event, base_filters["events"], sort_key=sort_key, reverse=reverse)
     projects_results = get_and_sort_results(Project, base_filters["projects"], sort_key=sort_key, reverse=reverse)
     organisations_results = db.session.scalars(sa_select(Organisation).filter(*base_filters["organisations"])).all()
-
-    # Сбор авторов и журналов из найденных записей
-    # authors_results = set()
-    # magazines_results = set()
-
-    # for news in news_results:
-    #     authors_results.update(news.authors)
-    #     if news.magazine:
-    #         magazines_results.add(news.magazine)
-
-    # for publication in publications_results:
-    #     authors_results.update(publication.authors)
-    #     if publication.magazine:
-    #         magazines_results.add(publication.magazine)
-
-    # for project in projects_results:
-    #     authors_results.update(project.authors)
 
     authors_results = []
     magazines_results = []
@@ -452,8 +375,6 @@ def search():
         "projects": [{"id": pr.id, "title": pr.title, "title_en": pr.title_en,"link": f"/projects/{pr.id}"} for pr in projects_results],
         "events": [{"id": e.id, "title": e.title, "title_en": e.title_en, "link": f"/events/{e.id}"} for e in events_results],
         "organisations": [{"id": o.id, "link": f"/organisations/{o.id}"} for o in organisations_results],
-        # "authors": [{"id": a.id, "name": f"{a.last_name} {a.first_name} {a.middle_name or ''}".strip()} for a in authors_results],
-        # "magazines": [{"id": m.id, "name": m.name} for m in magazines_results]
     }
 
     return jsonify(results)

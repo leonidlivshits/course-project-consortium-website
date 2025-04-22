@@ -4,7 +4,6 @@ from app.models import news_authors, publication_authors, project_authors
 
 def seed_all(app):
     with app.app_context():
-        # Очистка всех таблиц
         db.session.query(news_authors).delete()
         db.session.query(publication_authors).delete()
         db.session.query(project_authors).delete()
@@ -17,14 +16,12 @@ def seed_all(app):
         db.session.query(Project).delete()
         db.session.commit()
 
-        # Тестовые данные для авторов
         authors_data = [
             {"first_name": "Иван", "last_name": "Иванов", "middle_name": "Иванович"},
             {"first_name": "Петр", "last_name": "Петров", "middle_name": "Петрович"},
             {"first_name": "Сергей", "last_name": "Сидоров", "middle_name": None}
         ]
 
-        # Создание авторов
         authors = []
         for author_data in authors_data:
             author = Author(**author_data)
@@ -32,14 +29,12 @@ def seed_all(app):
             authors.append(author)
         db.session.commit()
 
-        # Тестовые данные для журналов
         magazines_data = [
             {"name": "Журнал 1"},
             {"name": "Журнал 2"},
             {"name": "Журнал 3"}
         ]
 
-        # Создание журналов
         magazines = []
         for magazine_data in magazines_data:
             magazine = Magazine(**magazine_data)
@@ -47,7 +42,6 @@ def seed_all(app):
             magazines.append(magazine)
         db.session.commit()
 
-        # Тестовые данные для новостей
         news_data = [
             {
                 "title": "Новость с изображением",
@@ -78,7 +72,6 @@ def seed_all(app):
             }
         ]
 
-        # Создание новостей
         for news_item in news_data:
             news = News(
                 title=news_item["title"],
@@ -91,12 +84,9 @@ def seed_all(app):
             for author_id in news_item["author_ids"]:
                 author = Author.query.get(author_id)
                 news.authors.append(author)
-            #print(news.title_en)
             db.session.add(news)
-              # Автоматически переведено и закэшировано
         db.session.commit()
 
-        # Тестовые данные для публикаций
         publications_data = [
             {
                 "title": "Публикация 1",
@@ -114,7 +104,6 @@ def seed_all(app):
             }
         ]
 
-        # Создание публикаций
         for publication_item in publications_data:
             publication = Publications(
                 title=publication_item["title"],
@@ -128,37 +117,6 @@ def seed_all(app):
             db.session.add(publication)
         db.session.commit()
 
-        # # Преобразование строки времени в объект time
-        # def parse_time(time_str):
-        #     return datetime.strptime(time_str, "%H:%M").time()
-
-
-        # # Тестовые данные для событий
-        # events_data = [
-        #     {
-        #         "title": "Конференция",
-        #         "date": "15 января 2025",
-        #         "time": "15:00",
-        #         "location": "Москва, Россия",
-        #         "description": "Присоединяйтесь к нашей ежегодной конференции по кардиогенетике!"
-        #     },
-        #     {
-        #         "title": "Семинар",
-        #         "date": "22 февраля 2025",
-        #         "time": "15:00",
-        #         "location": "Санкт-Петербург, Россия",
-        #         "description": "Узнайте о последних методах в кардиогенетике на нашем семинаре."
-        #     },
-        #     {
-        #         "title": "Вебинар",
-        #         "date": "10 марта 2025",
-        #         "time": "15:00",
-        #         "location": "Онлайн",
-        #         "description": "Не пропустите наш вебинар о генетических тестах!"
-        #     }
-        # ]
-
-
         # Функция для парсинга даты в формате "день-месяц-год"
         def parse_date(date_str):
             return datetime.strptime(date_str, "%d-%m-%Y").date()
@@ -166,41 +124,32 @@ def seed_all(app):
         def parse_time(time_str):
             return datetime.strptime(time_str, "%H:%M").time()
 
-        # Тестовые данные для событий
         events_data = [
             {
                 "title": "Конференция",
-                # "date": parse_date("15-01-2025"),  # Используем числовой формат
-                # "time": parse_time("15:00"),
                 "publication_date": datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
                 "location": "Москва, Россия",
                 "description": "Присоединяйтесь к нашей ежегодной конференции по кардиогенетике!"
             },
             {
                 "title": "Семинар",
-                # "date": parse_date("22-02-2025"),  # Используем числовой формат
-                # "time": parse_time("15:00"),
                 "publication_date": datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
                 "location": "Санкт-Петербург, Россия",
                 "description": "Узнайте о последних методах в кардиогенетике на нашем семинаре."
             },
             {
                 "title": "Вебинар",
-                # "date": parse_date("10-03-2025"),  # Используем числовой формат
-                # "time": parse_time("15:00"),
                 "publication_date": datetime.strptime("21/11/06 16:30", "%d/%m/%y %H:%M"),
                 "location": "Онлайн",
                 "description": "Не пропустите наш вебинар о генетических тестах!"
             }
         ]
 
-        # Создание событий
         for event_data in events_data:
             event = Event(**event_data)
             db.session.add(event)
         db.session.commit()
 
-        # Тестовые данные для организаций
         organisations_data = [
             {
                 "image": "/hse_logo.png",
@@ -212,13 +161,11 @@ def seed_all(app):
             }
         ]
 
-        # Создание организаций
         for org_data in organisations_data:
             org = Organisation(**org_data)
             db.session.add(org)
         db.session.commit()
 
-        # Тестовые данные для проектов
         projects_data = [
             {
                 "title": "Проект с изображением",
@@ -246,7 +193,6 @@ def seed_all(app):
             }
         ]
 
-        # Создание проектов
         for project_item in projects_data:
             project = Project(
                 title=project_item["title"],

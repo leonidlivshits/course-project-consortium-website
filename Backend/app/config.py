@@ -4,11 +4,6 @@ from dotenv import load_dotenv
 from datetime import timedelta
 
 from pathlib import Path
-#print(os.urandom(12).hex())
-#dotenv_path = Path(__file__).resolve().parent / ".env"
-# print("ROOOOOOOOT")
-# print(dotenv_path)
-#load_dotenv(dotenv_path=dotenv_path)
 load_dotenv()
 
 class Config:
@@ -30,11 +25,9 @@ class Config:
 
     SQLITE_DB = os.environ.get('SQLITE_DB', )
 
-    #SQLALCHEMY_DATABASE_URI = f"sqlite:///{SQLITE_DB}"
     DB_HOST = os.environ.get('DB_HOST', 'localhost')
 
     SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:5432/{POSTGRES_DB}"
-    #SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:5432/{POSTGRES_DB}"
     SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get(
     'SQLALCHEMY_TRACK_MODIFICATIONS',
     )
@@ -64,14 +57,11 @@ class Config:
 
     BASIC_AUTH_USERNAME=os.environ.get('BASIC_AUTH_USERNAME')
     BASIC_AUTH_PASSWORD=os.environ.get('BASIC_AUTH_PASSWORD')
-  
-    #BASIC_AUTH_FORCE = True
 
     CACHE_TYPE = 'SimpleCache'
     CACHE_DEFAULT_TIMEOUT = 3600
 
     CORS_ORIGINS = ["http://127.0.0.1:3000", "http://62.217.181.205", "http://localhost:3000"]
-    #CORS_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"]
     CORS_METHODS = os.environ.get('CORS_METHODS', 'GET,POST,PUT,DELETE,OPTIONS').split(',')
     CORS_ALLOW_HEADERS = os.environ.get('CORS_ALLOW_HEADERS', 'Content-Type,Authorization').split(',')
     CORS_EXPOSE_HEADERS = os.environ.get('CORS_EXPOSE_HEADERS', 'Content-Type').split(',')
