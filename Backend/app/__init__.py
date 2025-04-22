@@ -139,5 +139,4 @@ def create_app(config_path = 'app.config.Config', mail = mail):
     with app.app_context():
         db.create_all()
 
-    print("CREATE APP")
     return app
