@@ -8,13 +8,14 @@ from flask_basicauth import BasicAuth
 from flask import Response, redirect, Flask
 from flask_admin import AdminIndexView, Admin
 from flask_admin.contrib.sqla import ModelView
+#from flask_admin.contrib.fileadmin import FileAdmin
 from .translator import translate_to_english
 from werkzeug.exceptions import HTTPException
 from wtforms import SelectMultipleField
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 from wtforms.fields.core import Field
 
-
+#import os
 
 
 
@@ -99,6 +100,30 @@ class MyAdminIndexView(AdminIndexView):
     
     def inaccessible_callback(self, name, **kwargs):
         return basic_auth.challenge()
+    
+# class MyFileAdmin(FileAdmin):
+#     can_upload = True
+#     can_delete = True
+#     can_mkdir = False
+#     allowed_extensions = ('pdf', 'jpg', 'png', 'docx')
+    
+#     def __init__(self):
+#         upload_path = os.path.join(
+#             os.path.dirname(os.path.dirname(__file__)), 
+#             'uploads'
+#         )
+#         super().__init__(
+#             base_path=upload_path,
+#             url_prefix='/uploads',
+#             name='Файлы',
+#             category='Управление'
+#         )
+    
+#     def is_accessible(self):
+#         return basic_auth.authenticate()
+    
+#     def inaccessible_callback(self, name, **kwargs):
+#         return basic_auth.challenge()
 
 
 class NewsModelView(MyModelView):
@@ -124,7 +149,7 @@ def register_admin_views(admin: Admin, db):
     admin.add_view(MyModelView(models.Publications, db.session, name='Публикации', category='Модели', endpoint='unique_publications_admin'))
     admin.add_view(MyModelView(models.Project, db.session, name='Проекты', category='Модели', endpoint='unique_project_admin'))
     admin.add_view(MyModelView(models.Organisation, db.session, name='Организации', category='Модели', endpoint='unique_organisation_admin'))
-
+    # admin.add_view(MyFileAdmin())
     
 
 def create_app(config_path = 'app.config.Config', mail = mail):

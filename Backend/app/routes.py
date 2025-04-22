@@ -15,8 +15,13 @@ from enum import Enum, auto
 from sqlalchemy import or_
 main = Blueprint('main', __name__)
 
-UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+# UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
+# os.makedirs(UPLOADS_DIR, exist_ok=True)
+
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+UPLOADS_DIR = os.path.join(BASEDIR, 'uploads')
 os.makedirs(UPLOADS_DIR, exist_ok=True)
+
 from flask_mail import Message
 
 # Маршрут для отдачи файлов
@@ -24,6 +29,32 @@ from flask_mail import Message
 def uploaded_file(filename):
     print(UPLOADS_DIR)
     return send_from_directory(UPLOADS_DIR, filename)
+
+# @main.route('/api/upload', methods=['POST'])
+# def upload_file():
+#     if 'file' not in request.files:
+#         return jsonify({"error": "No file part"}), 400
+    
+#     file = request.files['file']
+#     if file.filename == '':
+#         return jsonify({"error": "No selected file"}), 400
+    
+#     filename = secure_filename(file.filename)
+#     save_path = os.path.join(UPLOADS_DIR, filename)
+    
+#     # Быстрая потоковая запись
+#     with open(save_path, 'wb') as f:
+#         chunk_size = 4096
+#         while True:
+#             chunk = file.stream.read(chunk_size)
+#             if not chunk:
+#                 break
+#             f.write(chunk)
+    
+#     return jsonify({
+#         "url": f"/api/uploads/{filename}",
+#         "message": "File uploaded successfully"
+#     }), 201
 
 def send_email(subject, sender, recipients, body):
     try:
