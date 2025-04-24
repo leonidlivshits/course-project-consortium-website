@@ -91,7 +91,6 @@ class Contact(db.Model):
         return (f"{self.id} {self.name}")
 
 
-
 # Модель для событий
 class Event(TranslateMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -109,7 +108,6 @@ class Event(TranslateMixin, db.Model):
     )
     def __str__(self):
         return (f"{self.id} {self.title}")
-
 
 
 # Модель для новостей
@@ -172,7 +170,6 @@ class Project(TranslateMixin, db.Model):
     )
     def __str__(self):
         return (f"{self.id} {self.title}")
-
 
 # Модель для организаций
 class Organisation(db.Model):
