@@ -90,7 +90,7 @@ class Contact(db.Model):
     def __str__(self):
         return (f"{self.id} {self.name}")
 
-\
+
 
 # Модель для событий
 class Event(TranslateMixin, db.Model):
