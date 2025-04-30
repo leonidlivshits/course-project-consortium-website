@@ -2,7 +2,7 @@ from sqlalchemy import UniqueConstraint
 from . import utils
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, time, date
-from .translator import translate_to_english
+from .translator import translate_to_english, translate_to_russian
 
 db = SQLAlchemy()
 
@@ -22,8 +22,20 @@ class TranslateMixin:
                     translated = translate_to_english(source_value)
                     setattr(target, to_field, translated or source_value)
 
+        def translate_fields_to_russian(mapper, connection, target):
+            for to_field, from_field in target.__translations__:
+                source_value = getattr(target, from_field)
+                target_value = getattr(target, to_field)
+                
+                if source_value and not target_value:
+                    translated = translate_to_russian(source_value)
+                    setattr(target, to_field, translated or source_value)
+
         event.listen(cls, 'before_insert', translate_fields)
         event.listen(cls, 'before_update', translate_fields)
+
+        event.listen(cls, 'before_insert', translate_fields_to_russian)
+        event.listen(cls, 'before_update', translate_fields_to_russian)
         
         
 
@@ -94,12 +106,12 @@ class Contact(db.Model):
 # Модель для событий
 class Event(TranslateMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=True)
     title_en = db.Column(db.String(100), nullable=True)
     publication_date = db.Column(db.DateTime, nullable=False)
-    location = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(100), nullable=True)
     location_en = db.Column(db.String(100), nullable=True)
-    description = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=True)
     description_en = db.Column(db.Text, nullable=True)
     __translations__ = (
         ('title', 'title_en'),
@@ -113,13 +125,13 @@ class Event(TranslateMixin, db.Model):
 # Модель для новостей
 class News(TranslateMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=True)
     title_en = db.Column(db.String(100), nullable=True)
     publication_date = db.Column(db.DateTime, nullable=False)
-    description = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=True)
     description_en = db.Column(db.Text, nullable=True)
     magazine_id = db.Column(db.Integer, db.ForeignKey('magazine.id', ondelete="CASCADE"), nullable=True)
-    content = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text, nullable=True)
     content_en = db.Column(db.Text, nullable=True)
     materials = db.Column(db.String(300))
     authors = db.relationship('Author', secondary=news_authors, lazy='dynamic',
@@ -135,11 +147,11 @@ class News(TranslateMixin, db.Model):
 # Модель для публикаций
 class Publications(TranslateMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=True)
     title_en = db.Column(db.String(100), nullable=True)
     publication_date = db.Column(db.DateTime, nullable=False)
     magazine_id = db.Column(db.Integer, db.ForeignKey('magazine.id', ondelete="CASCADE"), nullable=True)
-    annotation = db.Column(db.Text, nullable=False)
+    annotation = db.Column(db.Text, nullable=True)
     annotation_en = db.Column(db.Text, nullable=True)
     authors = db.relationship('Author', secondary=publication_authors, lazy='dynamic',
                               backref=db.backref('publications', lazy=True), cascade="all, delete")
@@ -153,12 +165,12 @@ class Publications(TranslateMixin, db.Model):
 # Модель для проектов
 class Project(TranslateMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(100), nullable=True)
     title_en = db.Column(db.String(100), nullable=True)
     publication_date = db.Column(db.DateTime, nullable=False)
-    description = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=True)
     description_en = db.Column(db.Text, nullable=True)
-    content = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text, nullable=True)
     content_en = db.Column(db.Text, nullable=True)
     materials = db.Column(db.String(300))
     authors = db.relationship('Author', secondary=project_authors, lazy='dynamic',
