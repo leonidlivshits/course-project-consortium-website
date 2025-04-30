@@ -28,6 +28,7 @@ class Config:
     DB_HOST = os.environ.get('DB_HOST', 'localhost')
 
     SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:5432/{POSTGRES_DB}"
+    #SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{'localhost'}:5432/{POSTGRES_DB}"
     SQLALCHEMY_TRACK_MODIFICATIONS = os.environ.get(
     'SQLALCHEMY_TRACK_MODIFICATIONS',
     )

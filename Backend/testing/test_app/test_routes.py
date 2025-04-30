@@ -214,6 +214,12 @@ class TestEventRoutes:
         data = response.get_json()
         assert data['title'] == 'Event1'
 
+    def test_get_event_ru_by_id(self, client, route_event_ru):
+        response = client.get(f'/api/events/{route_event_ru.id}')
+        assert response.status_code == 200
+        data = response.get_json()
+        assert data['title_en'] == 'Event1'
+
     def test_get_event_by_id_not_found(self, client):
         response = client.get('/api/events/9999')
         assert response.status_code == 404

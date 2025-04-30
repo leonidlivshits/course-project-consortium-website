@@ -168,6 +168,18 @@ def route_event():
     db.session.commit()
     return db.session.get(Event, event.id)
 
+@fixture
+def route_event_ru():
+    event = Event(
+        title_en="Event1",
+        description_en="Description1",
+        publication_date=date(2023, 10, 1),
+        location_en="Location1",
+    )
+    db.session.add(event)
+    db.session.commit()
+    return db.session.get(Event, event.id)
+
 
 @fixture
 def route_news():
@@ -238,7 +250,10 @@ def auto_mock_translator(monkeypatch):
     mock_translate = lambda text, translator=None: f"{text}_en"
     monkeypatch.setattr("app.translator.translate_to_english", mock_translate)
 
-
+@fixture(autouse=True)
+def auto_mock_translator_ru(monkeypatch):
+    mock_translate = lambda text, translator=None: f"{text}_ru"
+    monkeypatch.setattr("app.translator.translate_to_russian", mock_translate)
 
 @fixture
 def uploaded_organisation(sample_organisation):
