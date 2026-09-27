@@ -54,6 +54,7 @@ class Config:
         'SECRET_KEY',
     )
     MAIL_DEFAULT_SENDER = ('No Reply', 'noreply@example.com')
+    SMTP_TO = os.environ.get('SMTP_TO')
 
 
     BASIC_AUTH_USERNAME=os.environ.get('BASIC_AUTH_USERNAME')
@@ -73,6 +74,7 @@ class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI= 'sqlite:///:memory:'
     BASIC_AUTH_USERNAME = 'admin'
     BASIC_AUTH_PASSWORD = 'password'
+    SMTP_TO = 'test@example.com'
     TESTING = True
     # CORS_ORIGINS = ['http://localhost:3000']
     # CORS_METHODS = ['GET', 'POST']

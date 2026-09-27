@@ -2,6 +2,7 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_cors import CORS
 import logging
+from . import models
 from .models import Author, Magazine, db
 from flask_basicauth import BasicAuth
 from flask import Response, redirect, Flask

@@ -1,5 +1,4 @@
-from sqlite3 import IntegrityError
-from flask import Blueprint, request, jsonify, send_from_directory, Response, session
+from flask import Blueprint, current_app, request, jsonify, send_from_directory, Response, session
 from email_validator import validate_email, EmailNotValidError
 from sqlalchemy import select as sa_select
 from werkzeug.utils import secure_filename
@@ -12,6 +11,7 @@ import logging
 from datetime import datetime
 from enum import Enum, auto
 from sqlalchemy import or_
+from sqlalchemy.exc import IntegrityError
 main = Blueprint('main', __name__)
 
 UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
@@ -64,11 +64,19 @@ def send_email(subject, sender, recipients, body):
 
 @main.route('/api/contact', methods=['POST'])
 def create_contact():
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     # Проверка обязательных полей
-    if not all(key in data for key in ['name', 'email', 'phone', 'message']):
+    if not isinstance(data, dict) or not all(
+        isinstance(data.get(key), str) and data[key].strip()
+        for key in ['name', 'email', 'phone', 'message']
+    ):
         return jsonify({'error': 'Missing required fields'}), 400
+
+    recipient = current_app.config.get('SMTP_TO')
+    if not recipient:
+        current_app.logger.error('SMTP_TO is not configured')
+        return jsonify({'error': 'Contact delivery unavailable'}), 503
 
     try:
         # Валидация email
@@ -112,7 +120,7 @@ Email: {normalized_email}
 Компания: {data.get('company', 'не указано')}
 Сообщение: {data['message']}"""
         
-        if send_email(subject, normalized_email, ['admin@dobhdvfc.mailosaur.net'], body):
+        if send_email(subject, normalized_email, [recipient], body):
             return jsonify({'message': 'Сообщение отправлено успешно!'}), 201
         else:
             raise Exception('Email sending failed')
