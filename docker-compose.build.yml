@@ -1,0 +1,8 @@
+services:
+  web:
+    image: consortium-backend:${VERSION:?}
+    build: ./Backend
+
+  frontend:
+    image: consortium-frontend:${VERSION:?}
+    build: ./my-app

@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY ./ .
+ENV REACT_APP_API_URL=/api
 RUN npm run build
 
 FROM nginx:1 as production-stage

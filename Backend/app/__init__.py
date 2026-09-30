@@ -137,7 +137,13 @@ def create_app(config_path = 'app.config.Config', mail = mail):
         max_age=app.config["CORS_MAX_AGE"]
     )
 
-    with app.app_context():
+    @app.cli.command("init-db")
+    def init_db():
         db.create_all()
+        print("Таблицы созданы")
+
+    if app.config.get("TESTING"):
+        with app.app_context():
+            db.create_all()
 
     return app

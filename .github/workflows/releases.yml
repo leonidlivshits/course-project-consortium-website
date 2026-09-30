@@ -1,0 +1,38 @@
+name: Release checks
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          cp Backend/.env.example Backend/.env
+          VERSION=ci001 docker compose -f docker-compose.build.yml build
+      - name: Release
+        run: |
+          umask 077
+          mkdir -p releases
+          mkdir releases/ci001 &&
+          VERSION=ci001 docker compose --env-file Backend/.env -f docker-compose.yml config -o releases/ci001/compose.yml
+      - name: Initialize the new database
+        run: |
+          docker compose -f releases/ci001/compose.yml pull db
+          docker compose -f releases/ci001/compose.yml up -d --pull never --wait db
+          docker compose -f releases/ci001/compose.yml run --rm --no-deps --pull never --entrypoint flask web --app run.py init-db
+      - name: Run and check HTTP
+        run: |
+          docker compose -f releases/ci001/compose.yml up -d --no-build --pull never --wait
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 http://localhost:3000/
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 http://localhost:3000/api/news
+      - name: Stop the temporary environment
+        if: always()
+        run: |
+          if [ -f releases/ci001/compose.yml ]; then
+            docker compose -f releases/ci001/compose.yml stop
+          fi
