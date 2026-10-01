@@ -25,8 +25,6 @@ services:
       - ./Backend/.env
     environment:
       DB_HOST: db
-    ports:
-      - "${BACKEND_PORT:-5000}:80"
     depends_on:
       db:
         condition: service_healthy
@@ -37,6 +35,7 @@ services:
     image: consortium-frontend:${VERSION:?}
     ports:
       - "${FRONTEND_PORT:-3000}:80"
+      - "${API_PORT:-5000}:80"
     depends_on:
       - web
     networks:
