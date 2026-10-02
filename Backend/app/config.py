@@ -54,6 +54,7 @@ class Config:
         'SECRET_KEY',
     )
     MAIL_DEFAULT_SENDER = ('No Reply', 'noreply@example.com')
+    SMTP_TO = os.environ.get('SMTP_TO')
 
 
     BASIC_AUTH_USERNAME=os.environ.get('BASIC_AUTH_USERNAME')
@@ -62,7 +63,11 @@ class Config:
     CACHE_TYPE = 'SimpleCache'
     CACHE_DEFAULT_TIMEOUT = 3600
 
-    CORS_ORIGINS = ["http://62.217.181.205"]
+    CORS_ORIGINS = [
+        origin.strip()
+        for origin in os.environ.get('CORS_ORIGINS', '').split(',')
+        if origin.strip()
+    ]
     CORS_METHODS = os.environ.get('CORS_METHODS', 'GET,POST,PUT,DELETE,OPTIONS').split(',')
     CORS_ALLOW_HEADERS = os.environ.get('CORS_ALLOW_HEADERS', 'Content-Type,Authorization').split(',')
     CORS_EXPOSE_HEADERS = os.environ.get('CORS_EXPOSE_HEADERS', 'Content-Type').split(',')
@@ -70,9 +75,10 @@ class Config:
     CORS_MAX_AGE = int(os.environ.get('CORS_MAX_AGE', '600'))
 
 class TestConfig(Config):
-    SQLALCHEMY_DATABASE_URI= 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
     BASIC_AUTH_USERNAME = 'admin'
     BASIC_AUTH_PASSWORD = 'password'
+    SMTP_TO = 'test@example.com'
     TESTING = True
     # CORS_ORIGINS = ['http://localhost:3000']
     # CORS_METHODS = ['GET', 'POST']

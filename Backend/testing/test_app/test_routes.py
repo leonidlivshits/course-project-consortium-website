@@ -1,5 +1,5 @@
 from datetime import datetime, date, time
-from sqlite3 import IntegrityError
+from sqlalchemy.exc import IntegrityError
 from unittest.mock import MagicMock, patch
 from unittest.mock import patch, MagicMock
 from flask_mail import Message
@@ -17,6 +17,11 @@ from app.models import (
     Magazine,
     db
 )
+
+def test_health(client):
+    response = client.get('/api/health')
+    assert response.status_code == 204
+    assert response.data == b''
 
 class TestOrganisationRoutes:
     def test_get_organisations(self, client, route_organisation):
@@ -44,6 +49,7 @@ class TestOrganisationRoutes:
 class TestContactRoutes:
     def test_create_contact_success(self, client, app_testing, mock_contact_data):
         with app_testing.app_context(), mail.record_messages() as outbox:
+            app_testing.config['SMTP_TO'] = 'configured@example.com'
             response = client.post('/api/contact', json=mock_contact_data)
             assert response.status_code == 201
             data = response.get_json()
@@ -55,6 +61,7 @@ class TestContactRoutes:
             
             assert len(outbox) == 1
             sent_msg = outbox[0]
+            assert sent_msg.recipients == ['configured@example.com']
             assert mock_contact_data['email'] in sent_msg.body
             assert 'не указано' in sent_msg.body
 
@@ -77,6 +84,25 @@ class TestContactRoutes:
             response = client.post('/api/contact', json=data)
             assert response.status_code == 400
             assert error_msg in response.get_json()['error']
+
+    @pytest.mark.parametrize('body', ['not json', '[]', 'null'])
+    def test_create_contact_rejects_non_object_json(self, client, body):
+        response = client.post('/api/contact', data=body, content_type='application/json')
+        assert response.status_code == 400
+        assert response.get_json()['error'] == 'Missing required fields'
+
+    def test_create_contact_rejects_non_string_fields(self, client, mock_contact_data):
+        for field in ('name', 'email', 'phone', 'message'):
+            invalid_data = mock_contact_data.copy()
+            invalid_data[field] = []
+            response = client.post('/api/contact', json=invalid_data)
+            assert response.status_code == 400
+
+    def test_create_contact_without_recipient(self, client, app_testing, mock_contact_data):
+        app_testing.config['SMTP_TO'] = None
+        response = client.post('/api/contact', json=mock_contact_data)
+        assert response.status_code == 503
+        assert Contact.query.count() == 0
 
     def test_create_contact_invalid_email(self, client, app_testing, mock_contact_data):
         invalid_data = mock_contact_data.copy()
@@ -101,7 +127,7 @@ class TestContactRoutes:
     def test_create_contact_database_integrity_error(self, client, app_testing, mock_contact_data):
         with app_testing.app_context():
             with patch('app.routes.db.session.commit') as mock_commit:
-                mock_commit.side_effect = IntegrityError("Integrity Error", "params", "orig")
+                mock_commit.side_effect = IntegrityError("INSERT INTO contact ...", {}, Exception("constraint failed"))
                 
                 response = client.post('/api/contact', json=mock_contact_data)
                 assert response.status_code == 500
@@ -433,4 +459,3 @@ class TestUploadsFile:
     def test_uploaded_correct_file(self, client, uploaded_organisation):
         response = client.get(f"/api/uploads/{uploaded_organisation.image}")
         assert response.status_code == 200
-        

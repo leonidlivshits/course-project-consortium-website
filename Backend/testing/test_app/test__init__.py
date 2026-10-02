@@ -1,9 +1,11 @@
 from dataclasses import field
 from unittest.mock import MagicMock, patch
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, Integer, inspect
 from wtforms import Form
 from flask_admin.contrib.sqla import ModelView as BaseModelView
+from app import create_app
 from app.__init__ import CustomQuerySelectField, MyModelView, MyQuerySelectMultipleField
+from app.config import TestConfig
 from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms.form import FormMeta
 import pytest
@@ -158,3 +160,20 @@ class TestQuery:
         assert label == "John Doe"
         pk = field.get_pk(dummy_author)
         assert pk == 1
+
+
+def test_init_db_command():
+    class EmptyDatabaseConfig(TestConfig):
+        TESTING = False
+
+    app = create_app(EmptyDatabaseConfig)
+    with app.app_context():
+        expected_tables = set(db.metadata.tables)
+        assert not inspect(db.engine).get_table_names()
+
+    result = app.test_cli_runner().invoke(args=['init-db'])
+
+    assert result.exit_code == 0
+    assert 'Таблицы созданы' in result.output
+    with app.app_context():
+        assert expected_tables.issubset(inspect(db.engine).get_table_names())

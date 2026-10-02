@@ -7,6 +7,7 @@ from datetime import datetime, date, time
 import sys
 from pathlib import Path
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.engine import make_url
 from flask_admin import Admin
 
 root_dir = Path(__file__).parent.parent
@@ -30,6 +31,21 @@ from app import (
     MyModelView,
     MyQuerySelectMultipleField
 )
+from app.config import Config, TestConfig
+
+
+@fixture(scope='session', autouse=True)
+def require_test_database():
+    uri = TestConfig.SQLALCHEMY_DATABASE_URI
+    if not uri:
+        raise RuntimeError('TEST_DATABASE_URL is required for pytest')
+
+    url = make_url(uri)
+    if url.get_backend_name() != 'postgresql' or url.database != 'consortium_test':
+        raise RuntimeError('Pytest requires a dedicated PostgreSQL database named consortium_test')
+    app_url = make_url(Config.SQLALCHEMY_DATABASE_URI)
+    if (url.host, url.port, url.database) == (app_url.host, app_url.port, app_url.database):
+        raise RuntimeError('Pytest must not use the application database')
 
 
 @fixture

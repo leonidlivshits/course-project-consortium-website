@@ -1,0 +1,50 @@
+name: Release checks
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      FRONTEND_PORT: "3000"
+      API_PORT: "5000"
+      VERSION: ci-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reserve release ID
+        run: |
+          umask 077
+          mkdir -p releases
+          mkdir "releases/$VERSION"
+      - name: Build
+        run: |
+          cp Backend/.env.example Backend/.env
+          docker compose -f docker-compose.build.yml build
+      - name: Release
+        run: |
+          umask 077
+          docker compose --env-file Backend/.env -f docker-compose.yml config -o "releases/$VERSION/compose.yml"
+      - name: Initialize the new database
+        run: |
+          docker compose -f "releases/$VERSION/compose.yml" pull db
+          docker compose -f "releases/$VERSION/compose.yml" up -d --pull never --wait db
+          docker compose -f "releases/$VERSION/compose.yml" run --rm --no-deps --pull never --entrypoint flask web --app run.py init-db
+      - name: Run two web replicas and check HTTP
+        run: |
+          docker compose -f "releases/$VERSION/compose.yml" up -d --no-build --pull never --scale web=2 --wait
+          test "$(docker compose -f "releases/$VERSION/compose.yml" ps --status running -q web | wc -l)" -eq 2
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 "http://127.0.0.1:$FRONTEND_PORT/" > /dev/null
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 "http://127.0.0.1:$FRONTEND_PORT/api/news" > /dev/null
+      - name: Check admin route
+        run: |
+          admin_status=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$API_PORT/admin/")
+          test "$admin_status" = 401
+      - name: Stop the temporary environment
+        if: always()
+        run: |
+          if [ -f "releases/$VERSION/compose.yml" ]; then
+            docker compose -f "releases/$VERSION/compose.yml" stop
+          fi

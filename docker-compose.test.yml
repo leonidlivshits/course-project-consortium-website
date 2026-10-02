@@ -1,0 +1,27 @@
+name: course-project-consortium-website-tests
+
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: consortium_test
+      POSTGRES_USER: consortium_test
+      POSTGRES_PASSWORD: test_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  tests:
+    image: consortium-backend:test
+    build: ./Backend
+    env_file:
+      - ./Backend/.env.example
+    environment:
+      TEST_DATABASE_URL: postgresql+psycopg2://consortium_test:test_password@db:5432/consortium_test
+    entrypoint: ["pytest"]
+    command: ["-q", "--cov=app", "--cov-report=term-missing", "--cov-fail-under=100"]
+    depends_on:
+      db:
+        condition: service_healthy
