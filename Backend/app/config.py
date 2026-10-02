@@ -75,7 +75,7 @@ class Config:
     CORS_MAX_AGE = int(os.environ.get('CORS_MAX_AGE', '600'))
 
 class TestConfig(Config):
-    SQLALCHEMY_DATABASE_URI= 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
     BASIC_AUTH_USERNAME = 'admin'
     BASIC_AUTH_PASSWORD = 'password'
     SMTP_TO = 'test@example.com'

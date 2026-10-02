@@ -1,2 +1,2 @@
 coverage:
-	pytest -s --cov --cov-report html --cov-fail-under 100
+	docker compose -f ../docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from tests

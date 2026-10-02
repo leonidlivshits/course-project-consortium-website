@@ -4,30 +4,12 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12", "3.13"]
-
     steps:
-    - uses: actions/checkout@v4
-
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install dependencies
-      run: |
-        cd Backend
-        pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run tests
-      run: |
-        pwd
-        cd Backend
-        cp .env.example .env
-        ls -a
-        pytest -s --cov --cov-report html --cov-fail-under 100
+      - uses: actions/checkout@v4
+      - name: Run tests on Python 3.12 and PostgreSQL 17
+        run: docker compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from tests
+      - name: Remove test database
+        if: always()
+        run: docker compose -f docker-compose.test.yml down -v
