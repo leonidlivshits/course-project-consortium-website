@@ -10,19 +10,22 @@
 cp -n Backend/.env.example Backend/.env
 ```
 
-Собрать образы:
+Тесты на отдельной PostgreSQL 17 (Python 3.12):
 
 ```bash
-VERSION=v2 docker compose -f docker-compose.build.yml build
+docker compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from tests
+docker compose -f docker-compose.test.yml down -v
 ```
 
-Сохранить конфигурацию релиза (содержит секреты):
+Собрать релиз с новым номером (файл настроек содержит секреты):
 
 ```bash
+export VERSION=v2
 umask 077
 mkdir -p releases
-mkdir releases/v2 &&
-VERSION=v2 docker compose --env-file Backend/.env -f docker-compose.yml config -o releases/v2/compose.yml
+mkdir "releases/$VERSION" &&
+docker compose -f docker-compose.build.yml build &&
+docker compose --env-file Backend/.env -f docker-compose.yml config -o "releases/$VERSION/compose.yml"
 ```
 
 Для пустой БД один раз создать таблицы:
