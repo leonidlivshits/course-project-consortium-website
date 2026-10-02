@@ -18,6 +18,11 @@ from app.models import (
     db
 )
 
+def test_health(client):
+    response = client.get('/api/health')
+    assert response.status_code == 204
+    assert response.data == b''
+
 class TestOrganisationRoutes:
     def test_get_organisations(self, client, route_organisation):
         response = client.get('/api/organisations')
