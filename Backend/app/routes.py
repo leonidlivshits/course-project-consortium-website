@@ -14,6 +14,13 @@ from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 main = Blueprint('main', __name__)
 
+
+@main.route('/api/health', methods=['GET'])
+def health():
+    db.session.execute(sa_select(1))
+    return '', 204
+
+
 UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads')
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 

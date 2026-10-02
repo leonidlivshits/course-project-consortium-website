@@ -3,6 +3,7 @@ name: course-project-consortium-website
 services:
   db:
     image: ${POSTGRES_IMAGE:-postgres:17}
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -21,6 +22,8 @@ services:
 
   web:
     image: consortium-backend:${VERSION:?}
+    restart: unless-stopped
+    stop_grace_period: 70s
     env_file:
       - ./Backend/.env
     environment:
@@ -28,11 +31,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1/api/health', timeout=2).close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - backend-network
 
   frontend:
     image: consortium-frontend:${VERSION:?}
+    restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-3000}:80"
       - "${API_PORT:-5000}:80"
