@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-db
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: init-db
+          image: consortium-backend:k8s1
+          imagePullPolicy: Never
+          command: ["flask", "--app", "run.py", "init-db"]
+          envFrom:
+            - secretRef:
+                name: backend-env
+          env:
+            - name: DB_HOST
+              value: db
