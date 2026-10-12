@@ -1,9 +1,9 @@
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_cors import CORS
-import logging
 from . import models
 from .models import Author, Magazine, db
+from .logging_config import configure_logging
 from flask_basicauth import BasicAuth
 from flask import Response, redirect, Flask
 from flask_admin import AdminIndexView, Admin
@@ -111,11 +111,7 @@ def create_app(config_path = 'app.config.Config', mail = mail):
 
     basic_auth.init_app(app)
 
-    handler = logging.StreamHandler()
-    handler.setLevel(app.config.get("LOG_LEVEL", logging.INFO))
-    formatter = logging.Formatter(app.config.get("LOG_FORMAT"))
-    handler.setFormatter(formatter)
-    app.logger.addHandler(handler)
+    configure_logging(app)
 
     db.init_app(app)
     mail.init_app(app)
