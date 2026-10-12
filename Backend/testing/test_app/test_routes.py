@@ -188,7 +188,7 @@ class TestEmailSending:
         mock_mail.send.assert_called_once()
 
     @patch('app.routes.mail')
-    @patch('app.routes.logging.error')
+    @patch('app.routes.logger.exception')
     def test_send_email_logging(self, mock_logging, mock_mail):
         test_exception = Exception("Test error message")
         mock_mail.send = MagicMock(side_effect=test_exception)
@@ -200,8 +200,10 @@ class TestEmailSending:
             body="Body"
         )
         
-        expected_log_message = "Ошибка при отправке email: Test error message"
-        mock_logging.assert_called_once_with(expected_log_message)
+        mock_logging.assert_called_once_with(
+            "Не удалось отправить письмо",
+            extra={"event": "contact.email_delivery_failed"},
+        )
 
     @patch('app.routes.mail')
     @patch('app.routes.Message')
