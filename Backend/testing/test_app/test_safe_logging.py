@@ -30,6 +30,13 @@ def log_entries(output):
     return [json.loads(line) for line in output.getvalue().splitlines()]
 
 
+def application_entries(output):
+    return [
+        entry for entry in log_entries(output)
+        if entry["event"] != "http.request.completed"
+    ]
+
+
 def test_log_without_event_uses_default_name():
     record = logging.LogRecord(
         "app", logging.INFO, __file__, 1, "message", (), None
@@ -59,7 +66,7 @@ def test_missing_recipient_log_excludes_contact_data(
     response = client.post("/api/contact", json=mock_contact_data)
 
     assert response.status_code == 503
-    entries = log_entries(app_log_output)
+    entries = application_entries(app_log_output)
     assert len(entries) == 1
     assert entries[0]["event"] == "contact.smtp_unconfigured"
     assert entries[0]["level"] == "ERROR"
@@ -77,7 +84,7 @@ def test_invalid_email_log_excludes_address(
     response = client.post("/api/contact", json=invalid_data)
 
     assert response.status_code == 400
-    entries = log_entries(app_log_output)
+    entries = application_entries(app_log_output)
     assert len(entries) == 1
     assert entries[0]["event"] == "contact.invalid_email"
     assert entries[0]["level"] == "WARNING"
@@ -97,7 +104,7 @@ def test_database_error_log_excludes_sql_parameters(
         response = client.post("/api/contact", json=mock_contact_data)
 
     assert response.status_code == 500
-    entries = log_entries(app_log_output)
+    entries = application_entries(app_log_output)
     assert len(entries) == 1
     assert entries[0]["event"] == "contact.database_write_failed"
     assert entries[0]["error.type"] == "IntegrityError"
@@ -129,7 +136,7 @@ def test_email_delivery_failure_is_logged_once(
 
     assert response.status_code == 500
     assert "сохранено, но не отправлено" in response.get_json()["error"]
-    entries = log_entries(app_log_output)
+    entries = application_entries(app_log_output)
     assert len(entries) == 1
     assert entries[0]["event"] == "contact.email_delivery_failed"
     assert "private@example.com" not in app_log_output.getvalue()
@@ -143,8 +150,44 @@ def test_email_processing_log_excludes_exception(
         response = client.post("/api/contact", json=mock_contact_data)
 
     assert response.status_code == 500
-    entries = log_entries(app_log_output)
+    entries = application_entries(app_log_output)
     assert len(entries) == 1
     assert entries[0]["event"] == "contact.email_processing_failed"
     assert entries[0]["error.type"] == "RuntimeError"
     assert "private@example.com" not in app_log_output.getvalue()
+
+
+def test_http_request_log_uses_route_template_and_omits_query(
+    client, app_log_output
+):
+    response = client.get("/api/events/987654?token=private-token")
+
+    assert response.status_code == 404
+    entries = log_entries(app_log_output)
+    assert len(entries) == 1
+    entry = entries[0]
+    assert entry["event"] == "http.request.completed"
+    assert entry["level"] == "INFO"
+    assert entry["http.request.method"] == "GET"
+    assert entry["http.route"] == "/api/events/<int:event_id>"
+    assert entry["http.response.status_code"] == 404
+    assert entry["duration_ms"] >= 0
+    assert "private-token" not in app_log_output.getvalue()
+    assert "/api/events/987654" not in app_log_output.getvalue()
+
+
+def test_http_request_log_covers_unmatched_and_successful_routes(
+    client, app_log_output
+):
+    missing_response = client.get("/missing?token=private-token")
+    health_response = client.get("/api/health")
+
+    assert missing_response.status_code == 404
+    assert health_response.status_code == 204
+    entries = log_entries(app_log_output)
+    assert len(entries) == 2
+    assert entries[0]["http.route"] == "<unmatched>"
+    assert entries[0]["http.response.status_code"] == 404
+    assert entries[1]["http.route"] == "/api/health"
+    assert entries[1]["http.response.status_code"] == 204
+    assert "private-token" not in app_log_output.getvalue()

@@ -1,10 +1,12 @@
 import json
 import logging
 import sys
+import time
 import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 
+from flask import g, request
 from flask.logging import default_handler
 
 
@@ -17,6 +19,12 @@ LOG_LEVELS = {
     "ERROR": logging.ERROR,
     "CRITICAL": logging.CRITICAL,
 }
+HTTP_LOG_FIELDS = (
+    "http.request.method",
+    "http.route",
+    "http.response.status_code",
+    "duration_ms",
+)
 
 
 class JsonFormatter(logging.Formatter):
@@ -35,6 +43,9 @@ class JsonFormatter(logging.Formatter):
             "service.name": "web",
             "event": event,
         }
+        for field in HTTP_LOG_FIELDS:
+            if field in record.__dict__:
+                entry[field] = record.__dict__[field]
 
         if record.exc_info and record.exc_info[0]:
             error_type, _, error_traceback = record.exc_info
@@ -70,3 +81,27 @@ def configure_logging(app):
     logger.addHandler(handler)
     logger.setLevel(level)
     logger.propagate = False
+
+
+def register_http_logging(app):
+    @app.before_request
+    def start_request_timer():
+        g.http_started_at = time.perf_counter()
+
+    @app.after_request
+    def log_http_request(response):
+        duration_ms = round(
+            (time.perf_counter() - g.http_started_at) * 1000, 2
+        )
+        route = request.url_rule.rule if request.url_rule else "<unmatched>"
+        app.logger.info(
+            "HTTP-запрос завершён",
+            extra={
+                "event": "http.request.completed",
+                "http.request.method": request.method,
+                "http.route": route,
+                "http.response.status_code": response.status_code,
+                "duration_ms": duration_ms,
+            },
+        )
+        return response

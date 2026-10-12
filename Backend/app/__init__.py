@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from . import models
 from .models import Author, Magazine, db
-from .logging_config import configure_logging
+from .logging_config import configure_logging, register_http_logging
 from flask_basicauth import BasicAuth
 from flask import Response, redirect, Flask
 from flask_admin import AdminIndexView, Admin
@@ -112,6 +112,7 @@ def create_app(config_path = 'app.config.Config', mail = mail):
     basic_auth.init_app(app)
 
     configure_logging(app)
+    register_http_logging(app)
 
     db.init_app(app)
     mail.init_app(app)
