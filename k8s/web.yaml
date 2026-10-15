@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 70
       containers:
         - name: web
-          image: consortium-backend:k8s1
+          image: consortium-backend:k8s2
           imagePullPolicy: Never
           ports:
             - containerPort: 80

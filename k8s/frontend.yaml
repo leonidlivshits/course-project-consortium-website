@@ -1,36 +1,4 @@
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: frontend-nginx
-data:
-  default.conf: |
-    upstream backend {
-      server web:80;
-    }
-
-    server {
-      listen 80;
-
-      location / {
-        root /app;
-        index index.html index.htm;
-        try_files $uri $uri/ /index.html;
-      }
-
-      location /api {
-        proxy_pass http://backend;
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-      }
-
-      location /admin {
-        proxy_pass http://backend;
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Real-IP $remote_addr;
-      }
-    }
----
-apiVersion: v1
 kind: Service
 metadata:
   name: frontend
