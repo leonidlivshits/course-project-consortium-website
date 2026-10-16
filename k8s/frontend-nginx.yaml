@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-nginx
+data:
+  default.conf: |
+    upstream backend {
+      server web:80;
+    }
+
+    log_format access_json escape=json
+      '{"timestamp":"$time_iso8601",'
+      '"level":"INFO",'
+      '"message":"HTTP-запрос завершён",'
+      '"service.name":"frontend",'
+      '"event":"http.request.completed",'
+      '"http.request.method":"$request_method",'
+      '"http.response.status_code":$status,'
+      '"duration_seconds":$request_time}';
+
+    server {
+      listen 80;
+      access_log /dev/stdout access_json;
+
+      location / {
+        root /app;
+        index index.html index.htm;
+        try_files $uri $uri/ /index.html;
+      }
+
+      location /api {
+        proxy_pass http://backend;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+      }
+
+      location /admin {
+        proxy_pass http://backend;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+      }
+    }

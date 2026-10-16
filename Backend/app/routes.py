@@ -12,7 +12,9 @@ from datetime import datetime
 from enum import Enum, auto
 from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
+
 main = Blueprint('main', __name__)
+logger = logging.getLogger(__name__)
 
 
 @main.route('/api/health', methods=['GET'])
@@ -25,12 +27,9 @@ UPLOADS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads'
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 
-from flask_mail import Message
-
 # Маршрут для отдачи файлов
 @main.route('/api/uploads/<filename>')
 def uploaded_file(filename):
-    print(UPLOADS_DIR)
     return send_from_directory(UPLOADS_DIR, filename)
 
 # @main.route('/api/upload', methods=['POST'])
@@ -64,8 +63,11 @@ def send_email(subject, sender, recipients, body):
         msg.body = body
         mail.send(msg)
         return True
-    except Exception as e:
-        logging.error(f"Ошибка при отправке email: {e}")
+    except Exception:
+        logger.exception(
+            "Не удалось отправить письмо",
+            extra={"event": "contact.email_delivery_failed"},
+        )
         return False
 
 
@@ -82,15 +84,21 @@ def create_contact():
 
     recipient = current_app.config.get('SMTP_TO')
     if not recipient:
-        current_app.logger.error('SMTP_TO is not configured')
+        logger.error(
+            "Не настроен SMTP_TO",
+            extra={"event": "contact.smtp_unconfigured"},
+        )
         return jsonify({'error': 'Contact delivery unavailable'}), 503
 
     try:
         # Валидация email
         email_info = validate_email(data['email'], check_deliverability=False)
         normalized_email = email_info.normalized
-    except EmailNotValidError as e:
-        logging.error(f"Email validation error: {e}")
+    except EmailNotValidError:
+        logger.warning(
+            "Некорректный адрес электронной почты",
+            extra={"event": "contact.invalid_email"},
+        )
         return jsonify({'error': 'Invalid email address'}), 400
 
     # Проверка на существующую запись
@@ -114,9 +122,12 @@ def create_contact():
         db.session.add(new_contact)
         db.session.commit()
 
-    except IntegrityError as e:
+    except IntegrityError:
         db.session.rollback()
-        logging.error(f"Database error: {e}")
+        logger.exception(
+            "Не удалось сохранить обращение",
+            extra={"event": "contact.database_write_failed"},
+        )
         return jsonify({'error': 'Database error occurred'}), 500
 
     try:
@@ -129,11 +140,13 @@ Email: {normalized_email}
         
         if send_email(subject, normalized_email, [recipient], body):
             return jsonify({'message': 'Сообщение отправлено успешно!'}), 201
-        else:
-            raise Exception('Email sending failed')
+        return jsonify({'error': 'Сообщение сохранено, но не отправлено'}), 500
 
-    except Exception as e:
-        logging.error(f"Email sending error: {e}")
+    except Exception:
+        logger.exception(
+            "Не удалось завершить отправку обращения",
+            extra={"event": "contact.email_processing_failed"},
+        )
         return jsonify({'error': 'Сообщение сохранено, но не отправлено'}), 500
 
 

@@ -1,4 +1,3 @@
-import logging
 import os
 from dotenv import load_dotenv
 from datetime import timedelta
@@ -8,8 +7,7 @@ load_dotenv()
 
 class Config:
 
-    LOG_LEVEL = logging.DEBUG
-    LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
     
     POSTGRES_USER = os.environ.get(
     'POSTGRES_USER',
