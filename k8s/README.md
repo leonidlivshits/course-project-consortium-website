@@ -19,9 +19,13 @@ docker build -t consortium-backend:k8s2 Backend
 docker build -t consortium-frontend:k8s1 my-app
 minikube image load consortium-backend:k8s2
 minikube image load consortium-frontend:k8s1
+minikube image pull quay.io/prometheuscommunity/postgres-exporter:v0.20.1
 kubectl create secret generic backend-env --from-env-file=Backend/.env --dry-run=client -o yaml | kubectl apply -f -
+kubectl create secret generic postgres-exporter-auth --from-literal=password="$(openssl rand -hex 32)"
 kubectl apply -f k8s/postgres.yaml
 kubectl rollout status deployment/db --timeout=180s
+kubectl apply -f k8s/postgres-exporter-user.yaml
+kubectl wait --for=condition=complete job/postgres-exporter-user --timeout=180s
 kubectl apply -f k8s/init-db.yaml
 kubectl wait --for=condition=complete job/init-db --timeout=180s
 kubectl apply -f k8s/frontend-nginx.yaml -f k8s/web.yaml -f k8s/frontend.yaml
@@ -37,6 +41,26 @@ minikube kubectl -- port-forward svc/frontend 3000:80
 
 
 http://localhost:3000
+
+## Метрики PostgreSQL
+
+```bash
+minikube image pull quay.io/prometheuscommunity/postgres-exporter:v0.20.1
+minikube kubectl -- create secret generic postgres-exporter-auth --from-literal=password="$(openssl rand -hex 32)"
+minikube kubectl -- apply -f k8s/postgres-exporter-user.yaml
+minikube kubectl -- wait --for=condition=complete job/postgres-exporter-user --timeout=180s
+minikube kubectl -- apply -f k8s/postgres.yaml
+minikube kubectl -- rollout status deployment/db --timeout=180s
+```
+
+```bash
+minikube kubectl -- port-forward svc/db 9187:9187
+```
+
+
+```bash
+curl -fsS http://localhost:9187/metrics | grep '^pg_up 1$'
+```
 
 ## Обновление
 
