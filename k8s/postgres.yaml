@@ -39,6 +39,10 @@ spec:
     metadata:
       labels:
         app: db
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9187"
     spec:
       containers:
         - name: postgres

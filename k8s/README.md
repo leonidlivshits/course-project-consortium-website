@@ -62,13 +62,32 @@ minikube kubectl -- port-forward svc/db 9187:9187
 curl -fsS http://localhost:9187/metrics | grep '^pg_up 1$'
 ```
 
+## Метрики в VictoriaMetrics
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+helm repo add vm https://victoriametrics.github.io/helm-charts/ --force-update
+helm upgrade --install vms vm/victoria-metrics-single --version 0.49.0 -n monitoring --create-namespace -f k8s/victoria-metrics-values.yaml --wait
+minikube kubectl -- -n monitoring get pods,pvc
+docker build -t consortium-backend:k8s2 Backend
+minikube image load consortium-backend:k8s2 --overwrite=true
+minikube kubectl -- apply -f k8s/web.yaml
+minikube kubectl -- rollout restart deployment/web
+minikube kubectl -- rollout status deployment/web --timeout=180s
+minikube kubectl -- apply -f k8s/postgres.yaml
+minikube kubectl -- rollout status deployment/db --timeout=180s
+minikube kubectl -- -n monitoring port-forward svc/vms-victoria-metrics-single-server 8428:8428
+```
+
+http://localhost:8428/targets
+
 ## Обновление
 
 После изменения бэкенда:
 
 ```bash
 docker build -t consortium-backend:k8s2 Backend
-minikube image load consortium-backend:k8s2
+minikube image load consortium-backend:k8s2 --overwrite=true
 minikube kubectl -- rollout restart deployment/web
 minikube kubectl -- rollout status deployment/web --timeout=180s
 ```
