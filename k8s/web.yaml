@@ -22,6 +22,10 @@ spec:
     metadata:
       labels:
         app: web
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: "80"
     spec:
       terminationGracePeriodSeconds: 70
       containers:

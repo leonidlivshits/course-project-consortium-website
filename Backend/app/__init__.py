@@ -4,6 +4,7 @@ from flask_cors import CORS
 from . import models
 from .models import Author, Magazine, db
 from .logging_config import configure_logging, register_http_logging
+from .metrics import configure_metrics
 from flask_basicauth import BasicAuth
 from flask import Response, redirect, Flask
 from flask_admin import AdminIndexView, Admin
@@ -142,5 +143,7 @@ def create_app(config_path = 'app.config.Config', mail = mail):
     if app.config.get("TESTING"):
         with app.app_context():
             db.create_all()
+
+    configure_metrics(app)
 
     return app

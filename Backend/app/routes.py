@@ -121,6 +121,7 @@ def create_contact():
         
         db.session.add(new_contact)
         db.session.commit()
+        current_app.extensions["business_metrics"].contacts_saved.inc()
 
     except IntegrityError:
         db.session.rollback()
@@ -198,7 +199,9 @@ def get_news():
 def get_news_by_id(news_id):
     news = db.session.get(News, news_id)
     if news:
-        return jsonify(serializers.serialize_news(news)), 200
+        response = jsonify(serializers.serialize_news(news))
+        current_app.extensions["business_metrics"].news_views.inc()
+        return response, 200
     else:
         return jsonify({'error': 'Новость не найдена'}), 404
 
@@ -216,7 +219,9 @@ def get_publications():
 def get_publication_by_id(publication_id):
     publication = db.session.get(Publications, publication_id)
     if publication:
-        return jsonify(serializers.serialize_publications(publication)), 200
+        response = jsonify(serializers.serialize_publications(publication))
+        current_app.extensions["business_metrics"].publication_views.inc()
+        return response, 200
     else:
         return jsonify({'error': 'Публикация не найдена'}), 404
 
@@ -405,4 +410,6 @@ def search():
         "organisations": [{"id": o.id, "link": f"/organisations/{o.id}"} for o in organisations_results],
     }
 
-    return jsonify(results)
+    response = jsonify(results)
+    current_app.extensions["business_metrics"].searches.inc()
+    return response

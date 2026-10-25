@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-exporter-user
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: create-user
+          image: postgres:17
+          command: ["sh", "-ec"]
+          args:
+            - |
+              psql -v ON_ERROR_STOP=1 -h db -U "$POSTGRES_USER" -d postgres <<'SQL'
+              \getenv exporter_password EXPORTER_PASSWORD
+              SELECT 'CREATE ROLE postgres_exporter LOGIN'
+              WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'postgres_exporter')
+              \gexec
+              ALTER ROLE postgres_exporter WITH PASSWORD :'exporter_password';
+              GRANT pg_monitor TO postgres_exporter;
+              GRANT CONNECT ON DATABASE postgres TO postgres_exporter;
+              SQL
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backend-env
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-env
+                  key: POSTGRES_PASSWORD
+            - name: EXPORTER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-exporter-auth
+                  key: password
