@@ -11,6 +11,20 @@ server:
         - job_name: victoria-metrics
           static_configs:
             - targets: [localhost:8428]
+        - job_name: frontend-probe
+          metrics_path: /probe
+          params:
+            module: [http_204]
+          static_configs:
+            - targets:
+                - http://frontend.default.svc:80/api/health
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: blackbox-exporter.default.svc:9115
         - job_name: application-pods
           kubernetes_sd_configs:
             - role: pod

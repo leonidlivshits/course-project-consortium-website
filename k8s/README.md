@@ -67,7 +67,12 @@ curl -fsS http://localhost:9187/metrics | grep '^pg_up 1$'
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
 helm repo add vm https://victoriametrics.github.io/helm-charts/ --force-update
+minikube image pull quay.io/prometheus/blackbox-exporter:v0.29.1
+minikube kubectl -- apply -f k8s/blackbox-exporter.yaml
+minikube kubectl -- rollout status deployment/blackbox-exporter --timeout=180s
 helm upgrade --install vms vm/victoria-metrics-single --version 0.49.0 -n monitoring --create-namespace -f k8s/victoria-metrics-values.yaml --wait
+minikube kubectl -- -n monitoring rollout restart statefulset/vms-victoria-metrics-single-server
+minikube kubectl -- -n monitoring rollout status statefulset/vms-victoria-metrics-single-server --timeout=180s
 minikube kubectl -- -n monitoring get pods,pvc
 docker build -t consortium-backend:k8s2 Backend
 minikube image load consortium-backend:k8s2 --overwrite=true
@@ -80,6 +85,10 @@ minikube kubectl -- -n monitoring port-forward svc/vms-victoria-metrics-single-s
 ```
 
 http://localhost:8428/targets
+
+```bash
+curl -fsSG --data-urlencode 'query=probe_success{job="frontend-probe"}' http://localhost:8428/api/v1/query
+```
 
 ## Обновление
 
