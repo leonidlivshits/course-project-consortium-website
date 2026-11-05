@@ -90,6 +90,14 @@ http://localhost:8428/targets
 curl -fsSG --data-urlencode 'query=probe_success{job="frontend-probe"}' http://localhost:8428/api/v1/query
 ```
 
+## Графики SLI, SLO и SLA
+
+http://localhost:8428/vmui/
+
+```text
+100 * avg_over_time(probe_success{job="frontend-probe"}[24h])
+```
+
 ## Обновление
 
 После изменения бэкенда:
