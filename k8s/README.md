@@ -144,3 +144,15 @@ minikube kubectl -- -n logging port-forward svc/vls-victoria-logs-single-server 
 ```
 
 http://localhost:9428/select/vmui/
+
+## Алерты
+Уведомления идут в Telegram. Для них нужен сикрет alertmanager-telegram с ключами bot-token и chat-id
+
+```bash
+minikube kubectl -- -n monitoring create secret generic alertmanager-telegram \
+  --from-file=bot-token=k8s/telegram-token.local \
+  --from-file=chat-id=k8s/telegram-chat-id.local
+helm upgrade --install alerting vm/victoria-metrics-alert --version 0.51.0 \
+  -n monitoring -f k8s/victoria-metrics-alert-values.yaml --wait
+minikube kubectl -- -n monitoring get pods
+```
