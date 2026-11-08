@@ -1,0 +1,76 @@
+server:
+  datasource:
+    url: http://vms-victoria-metrics-single-server.monitoring.svc:8428
+  config:
+    alerts:
+      groups:
+        - name: consortium
+          interval: 15s
+          rules:
+            - alert: ConsortiumFrontendUnavailable
+              expr: probe_success{job="frontend-probe"} == 0
+              for: 1m
+              labels:
+                severity: critical
+              annotations:
+                summary: Сайт недоступен
+                description: Проверка /api/health через frontend не проходит.
+            - alert: ConsortiumSearchFailures
+              expr: |
+                (
+                  sum(increase(consortium_searches_total{app="web"}[5m]))
+                  /
+                  sum(increase(flask_http_request_duration_seconds_count{app="web",method="GET",url_rule="/api/search"}[5m]))
+                ) < 0.8
+                and
+                sum(increase(flask_http_request_duration_seconds_count{app="web",method="GET",url_rule="/api/search"}[5m])) >= 10
+              for: 30s
+              labels:
+                severity: warning
+              annotations:
+                summary: Много неудачных поисков
+                description: За пять минут выполнено не менее десяти поисков, успешных меньше 80%.
+            - alert: ConsortiumFlaskServerErrors
+              expr: sum(increase(flask_http_request_duration_seconds_count{app="web",status=~"5.."}[5m])) >= 3
+              for: 30s
+              labels:
+                severity: critical
+              annotations:
+                summary: Ошибки Flask
+                description: За последние пять минут сервер вернул не менее трёх ответов 5xx.
+            - alert: ConsortiumFlaskNotFoundBurst
+              expr: sum(increase(flask_http_request_duration_seconds_count{app="web",status="404"}[5m])) >= 5
+              for: 30s
+              labels:
+                severity: warning
+              annotations:
+                summary: Много ответов 404
+                description: За последние пять минут сервер вернул не менее пяти ответов 404.
+
+alertmanager:
+  enabled: true
+  extraVolumes:
+    - name: telegram-token
+      secret:
+        secretName: alertmanager-telegram
+  extraVolumeMounts:
+    - name: telegram-token
+      mountPath: /etc/alertmanager/telegram
+      readOnly: true
+  config:
+    route:
+      receiver: telegram
+      group_by: [alertname]
+      group_wait: 10s
+      group_interval: 1m
+      repeat_interval: 1h
+    receivers:
+      - name: telegram
+        telegram_configs:
+          - bot_token_file: /etc/alertmanager/telegram/bot-token
+            chat_id_file: /etc/alertmanager/telegram/chat-id
+            send_resolved: true
+            parse_mode: ""
+            message: |
+              {{ .Status }}: {{ .CommonLabels.alertname }}
+              {{ .CommonAnnotations.summary }}
