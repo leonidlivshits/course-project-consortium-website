@@ -1,0 +1,535 @@
+{
+    "annotations":  {
+                        "list":  [
+                                     {
+                                         "builtIn":  1,
+                                         "datasource":  {
+                                                            "type":  "grafana",
+                                                            "uid":  "-- Grafana --"
+                                                        },
+                                         "enable":  true,
+                                         "hide":  true,
+                                         "iconColor":  "rgba(0, 211, 255, 1)",
+                                         "name":  "Annotations \u0026 Alerts",
+                                         "type":  "dashboard"
+                                     }
+                                 ]
+                    },
+    "editable":  true,
+    "fiscalYearStartMonth":  0,
+    "graphTooltip":  0,
+    "links":  [
+
+              ],
+    "panels":  [
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "mappings":  [
+                                                                             {
+                                                                                 "options":  {
+                                                                                                 "0":  {
+                                                                                                           "color":  "red",
+                                                                                                           "text":  "Недоступен"
+                                                                                                       },
+                                                                                                 "1":  {
+                                                                                                           "color":  "green",
+                                                                                                           "text":  "Работает"
+                                                                                                       }
+                                                                                             },
+                                                                                 "type":  "value"
+                                                                             }
+                                                                         ]
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  5,
+                                       "w":  6,
+                                       "x":  0,
+                                       "y":  0
+                                   },
+                       "id":  1,
+                       "options":  {
+                                       "colorMode":  "value",
+                                       "graphMode":  "none",
+                                       "reduceOptions":  {
+                                                             "calcs":  [
+                                                                           "lastNotNull"
+                                                                       ],
+                                                             "fields":  "",
+                                                             "values":  false
+                                                         }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "probe_success{job=\"frontend-probe\"}",
+                                           "instant":  true,
+                                           "range":  false,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Сайт сейчас",
+                       "type":  "stat"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "decimals":  1,
+                                                            "thresholds":  {
+                                                                               "mode":  "absolute",
+                                                                               "steps":  [
+                                                                                             {
+                                                                                                 "color":  "green"
+                                                                                             },
+                                                                                             {
+                                                                                                 "color":  "red",
+                                                                                                 "value":  1
+                                                                                             }
+                                                                                         ]
+                                                                           },
+                                                            "unit":  "percent"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  5,
+                                       "w":  6,
+                                       "x":  6,
+                                       "y":  0
+                                   },
+                       "id":  2,
+                       "options":  {
+                                       "colorMode":  "value",
+                                       "graphMode":  "none",
+                                       "reduceOptions":  {
+                                                             "calcs":  [
+                                                                           "lastNotNull"
+                                                                       ],
+                                                             "fields":  "",
+                                                             "values":  false
+                                                         }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "100 * (sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\",status=~\"5..\"}[5m])) or vector(0)) / clamp_min(sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\"}[5m])), 1e-9)",
+                                           "instant":  true,
+                                           "range":  false,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Ответы 5xx, %",
+                       "type":  "stat"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "description":  "Успешные открытия новостей в текущих подах; после перезапуска счётчик начинается заново.",
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "decimals":  0,
+                                                            "unit":  "short"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  5,
+                                       "w":  6,
+                                       "x":  12,
+                                       "y":  0
+                                   },
+                       "id":  3,
+                       "options":  {
+                                       "graphMode":  "none",
+                                       "reduceOptions":  {
+                                                             "calcs":  [
+                                                                           "lastNotNull"
+                                                                       ],
+                                                             "fields":  "",
+                                                             "values":  false
+                                                         },
+                                       "colorMode":  "none"
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "sum(increase(consortium_news_views_total{app=\"web\"}[24h]))",
+                                           "instant":  true,
+                                           "range":  false,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Просмотры новостей за 24 ч",
+                       "type":  "stat"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "description":  "Успешные поиски в текущих подах; после перезапуска счётчик начинается заново.",
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "decimals":  0,
+                                                            "unit":  "short"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  5,
+                                       "w":  6,
+                                       "x":  18,
+                                       "y":  0
+                                   },
+                       "id":  4,
+                       "options":  {
+                                       "graphMode":  "none",
+                                       "reduceOptions":  {
+                                                             "calcs":  [
+                                                                           "lastNotNull"
+                                                                       ],
+                                                             "fields":  "",
+                                                             "values":  false
+                                                         },
+                                       "colorMode":  "none"
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "sum(increase(consortium_searches_total{app=\"web\"}[24h]))",
+                                           "instant":  true,
+                                           "range":  false,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Поиски за 24 ч",
+                       "type":  "stat"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "description":  "Запросы к Flask без проверки /api/health.",
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "unit":  "reqps"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  8,
+                                       "w":  12,
+                                       "x":  0,
+                                       "y":  5
+                                   },
+                       "id":  5,
+                       "options":  {
+                                       "legend":  {
+                                                      "displayMode":  "hidden",
+                                                      "placement":  "bottom"
+                                                  }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\"}[5m]))",
+                                           "legendFormat":  "Запросы",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Запросы в секунду",
+                       "type":  "timeseries"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "unit":  "reqps"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  8,
+                                       "w":  12,
+                                       "x":  12,
+                                       "y":  5
+                                   },
+                       "id":  6,
+                       "options":  {
+                                       "legend":  {
+                                                      "displayMode":  "list",
+                                                      "placement":  "bottom"
+                                                  }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "sum by(status) (rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\"}[5m]))",
+                                           "legendFormat":  "{{status}}",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Ответы по кодам",
+                       "type":  "timeseries"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "unit":  "s"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  8,
+                                       "w":  24,
+                                       "x":  0,
+                                       "y":  13
+                                   },
+                       "id":  7,
+                       "options":  {
+                                       "legend":  {
+                                                      "displayMode":  "list",
+                                                      "placement":  "bottom"
+                                                  }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "histogram_quantile(0.95, sum by(le,url_rule) (rate(flask_http_request_duration_seconds_bucket{app=\"web\",url_rule!=\"/api/health\"}[5m])))",
+                                           "legendFormat":  "{{url_rule}}",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Время ответа Flask, p95",
+                       "type":  "timeseries"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "description":  "Использование CPU контейнеров web за пять минут.",
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "unit":  "short"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  8,
+                                       "w":  12,
+                                       "x":  0,
+                                       "y":  21
+                                   },
+                       "id":  9,
+                       "options":  {
+                                       "legend":  {
+                                                      "displayMode":  "hidden",
+                                                      "placement":  "bottom"
+                                                  }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "sum(rate(container_cpu_usage_seconds_total{namespace=\"default\",container=\"web\",cpu=\"total\"}[5m]))",
+                                           "legendFormat":  "CPU",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "CPU web, ядра",
+                       "type":  "timeseries"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "description":  "Рабочая память контейнеров web.",
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "unit":  "bytes"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  8,
+                                       "w":  12,
+                                       "x":  12,
+                                       "y":  21
+                                   },
+                       "id":  10,
+                       "options":  {
+                                       "legend":  {
+                                                      "displayMode":  "hidden",
+                                                      "placement":  "bottom"
+                                                  }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "sum(container_memory_working_set_bytes{namespace=\"default\",container=\"web\"})",
+                                           "legendFormat":  "Память",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       }
+                                   ],
+                       "title":  "Память web",
+                       "type":  "timeseries"
+                   },
+                   {
+                       "datasource":  {
+                                          "type":  "prometheus",
+                                          "uid":  "victoriametrics"
+                                      },
+                       "description":  "Фактическая доля успешных проверок за последние 24 часа и постоянные линии SLO и учебного SLA.",
+                       "fieldConfig":  {
+                                           "defaults":  {
+                                                            "decimals":  2,
+                                                            "unit":  "percent"
+                                                        },
+                                           "overrides":  [
+
+                                                         ]
+                                       },
+                       "gridPos":  {
+                                       "h":  8,
+                                       "w":  24,
+                                       "x":  0,
+                                       "y":  29
+                                   },
+                       "id":  8,
+                       "options":  {
+                                       "legend":  {
+                                                      "displayMode":  "list",
+                                                      "placement":  "bottom"
+                                                  }
+                                   },
+                       "targets":  [
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "100 * avg_over_time(probe_success{job=\"frontend-probe\"}[24h])",
+                                           "legendFormat":  "Фактически (SLI)",
+                                           "range":  true,
+                                           "refId":  "A"
+                                       },
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "vector(99)",
+                                           "legendFormat":  "SLO 99%",
+                                           "range":  true,
+                                           "refId":  "B"
+                                       },
+                                       {
+                                           "datasource":  {
+                                                              "type":  "prometheus",
+                                                              "uid":  "victoriametrics"
+                                                          },
+                                           "expr":  "vector(95)",
+                                           "legendFormat":  "Учебное SLA 95%",
+                                           "range":  true,
+                                           "refId":  "C"
+                                       }
+                                   ],
+                       "title":  "Доступность за 24 часа",
+                       "type":  "timeseries"
+                   }
+               ],
+    "refresh":  "15s",
+    "schemaVersion":  42,
+    "tags":  [
+                 "consortium"
+             ],
+    "templating":  {
+                       "list":  [
+
+                                ]
+                   },
+    "time":  {
+                 "from":  "now-1h",
+                 "to":  "now"
+             },
+    "timepicker":  {
+
+                   },
+    "timezone":  "browser",
+    "title":  "Консорциум: приложение",
+    "weekStart":  "",
+    "uid":  "consortium-app",
+    "id":  null,
+    "version":  1
+}

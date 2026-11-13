@@ -70,6 +70,7 @@ helm repo add vm https://victoriametrics.github.io/helm-charts/ --force-update
 minikube image pull quay.io/prometheus/blackbox-exporter:v0.29.1
 minikube kubectl -- apply -f k8s/blackbox-exporter.yaml
 minikube kubectl -- rollout status deployment/blackbox-exporter --timeout=180s
+minikube kubectl -- apply -f k8s/victoria-metrics-cadvisor-rbac.yaml
 helm upgrade --install vms vm/victoria-metrics-single --version 0.49.0 -n monitoring --create-namespace -f k8s/victoria-metrics-values.yaml --wait
 minikube kubectl -- -n monitoring rollout restart statefulset/vms-victoria-metrics-single-server
 minikube kubectl -- -n monitoring rollout status statefulset/vms-victoria-metrics-single-server --timeout=180s
@@ -88,6 +89,8 @@ http://localhost:8428/targets
 
 ```bash
 curl -fsSG --data-urlencode 'query=probe_success{job="frontend-probe"}' http://localhost:8428/api/v1/query
+curl -fsSG --data-urlencode 'query=sum(rate(container_cpu_usage_seconds_total{namespace="default",container="web",cpu="total"}[5m]))' http://localhost:8428/api/v1/query
+curl -fsSG --data-urlencode 'query=container_memory_working_set_bytes{namespace="default",container="web"}' http://localhost:8428/api/v1/query
 ```
 
 ## Графики SLI, SLO и SLA
@@ -98,6 +101,27 @@ http://localhost:8428/vmui/
 100 * avg_over_time(probe_success{job="frontend-probe"}[24h])
 ```
 
+## Grafana
+
+```bash
+helm repo add grafana-community https://grafana-community.github.io/helm-charts --force-update
+minikube kubectl -- create namespace monitoring --dry-run=client -o yaml | minikube kubectl -- apply -f -
+minikube kubectl -- -n monitoring create configmap grafana-course-dashboards \
+  --from-file=app.json=k8s/grafana-app-dashboard.json \
+  --from-file=postgres.json=k8s/grafana-postgres-dashboard.json \
+  --dry-run=client -o yaml | minikube kubectl -- apply -f -
+helm upgrade --install grafana grafana-community/grafana --version 14.4.1 \
+  -n monitoring --create-namespace -f k8s/grafana-values.yaml --wait
+minikube kubectl -- -n monitoring get pods,pvc
+minikube kubectl -- -n monitoring get secret grafana -o jsonpath='{.data.admin-password}' | base64 -d; echo
+minikube kubectl -- -n monitoring port-forward svc/grafana 3300:80
+```
+
+http://127.0.0.1:3300 - вход как admin
+
+Дашборд http://127.0.0.1:3300/d/consortium-app. Исходник: `k8s/grafana-app-dashboard.json`.
+
+Дашборд Postgresql http://127.0.0.1:3300/d/consortium-postgres. 
 ## Обновление
 
 После изменения бэкенда:
