@@ -129,6 +129,7 @@ http://127.0.0.1:3300 - вход как admin
 ```bash
 docker build -t consortium-backend:k8s2 Backend
 minikube image load consortium-backend:k8s2 --overwrite=true
+minikube kubectl -- set image deployment/web web=consortium-backend:k8s2
 minikube kubectl -- rollout restart deployment/web
 minikube kubectl -- rollout status deployment/web --timeout=180s
 ```

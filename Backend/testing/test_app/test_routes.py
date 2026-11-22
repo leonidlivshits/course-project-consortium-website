@@ -23,6 +23,17 @@ def test_health(client):
     assert response.status_code == 204
     assert response.data == b''
 
+def test_liveness_does_not_query_database(client, monkeypatch):
+    execute = MagicMock(side_effect=AssertionError('liveness queried the database'))
+    with monkeypatch.context() as patch_context:
+        patch_context.setattr(db.session, 'execute', execute)
+        response = client.get('/api/live')
+
+    assert response.status_code == 204
+    assert response.headers['X-App-Version'] == client.application.config['APP_VERSION']
+    assert response.headers['X-App-Pod']
+    execute.assert_not_called()
+
 class TestOrganisationRoutes:
     def test_get_organisations(self, client, route_organisation):
         response = client.get('/api/organisations')

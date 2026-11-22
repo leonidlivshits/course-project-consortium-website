@@ -1,1 +1,3 @@
 Backend/prestart.sh text eol=lf
+k8s/deploy-strategies/traffic.sh text eol=lf
+k8s/deploy-strategies/route.sh text eol=lf
