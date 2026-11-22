@@ -17,6 +17,11 @@ main = Blueprint('main', __name__)
 logger = logging.getLogger(__name__)
 
 
+@main.route('/api/live', methods=['GET'])
+def liveness():
+    return '', 204
+
+
 @main.route('/api/health', methods=['GET'])
 def health():
     db.session.execute(sa_select(1))

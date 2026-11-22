@@ -132,7 +132,7 @@
                                                               "type":  "prometheus",
                                                               "uid":  "victoriametrics"
                                                           },
-                                           "expr":  "100 * (sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\",status=~\"5..\"}[5m])) or vector(0)) / clamp_min(sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\"}[5m])), 1e-9)",
+                                           "expr":  "100 * (sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!~\"/api/(health|live)\",status=~\"5..\"}[5m])) or vector(0)) / clamp_min(sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!~\"/api/(health|live)\"}[5m])), 1e-9)",
                                            "instant":  true,
                                            "range":  false,
                                            "refId":  "A"
@@ -242,7 +242,7 @@
                                           "type":  "prometheus",
                                           "uid":  "victoriametrics"
                                       },
-                       "description":  "Запросы к Flask без проверки /api/health.",
+                       "description":  "Запросы к Flask без проверок /api/health и /api/live.",
                        "fieldConfig":  {
                                            "defaults":  {
                                                             "unit":  "reqps"
@@ -270,7 +270,7 @@
                                                               "type":  "prometheus",
                                                               "uid":  "victoriametrics"
                                                           },
-                                           "expr":  "sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\"}[5m]))",
+                                           "expr":  "sum(rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!~\"/api/(health|live)\"}[5m]))",
                                            "legendFormat":  "Запросы",
                                            "range":  true,
                                            "refId":  "A"
@@ -311,7 +311,7 @@
                                                               "type":  "prometheus",
                                                               "uid":  "victoriametrics"
                                                           },
-                                           "expr":  "sum by(status) (rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!=\"/api/health\"}[5m]))",
+                                           "expr":  "sum by(status) (rate(flask_http_request_duration_seconds_count{app=\"web\",url_rule!~\"/api/(health|live)\"}[5m]))",
                                            "legendFormat":  "{{status}}",
                                            "range":  true,
                                            "refId":  "A"
@@ -352,7 +352,7 @@
                                                               "type":  "prometheus",
                                                               "uid":  "victoriametrics"
                                                           },
-                                           "expr":  "histogram_quantile(0.95, sum by(le,url_rule) (rate(flask_http_request_duration_seconds_bucket{app=\"web\",url_rule!=\"/api/health\"}[5m])))",
+                                           "expr":  "histogram_quantile(0.95, sum by(le,url_rule) (rate(flask_http_request_duration_seconds_bucket{app=\"web\",url_rule!~\"/api/(health|live)\"}[5m])))",
                                            "legendFormat":  "{{url_rule}}",
                                            "range":  true,
                                            "refId":  "A"

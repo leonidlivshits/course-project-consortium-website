@@ -1,0 +1,156 @@
+Script started on 2026-11-21 14:34:01+03:00 [COMMAND="bash builds/deploy-strategies/check.sh" <not executed on terminal>]
+
+== Minikube and Envoy Gateway ==
+$ k get nodes
+NAME       STATUS   ROLES           AGE   VERSION
+minikube   Ready    control-plane   44d   v1.37.0
+$ k apply -f k8s/deploy-strategies/gateway.yaml
+gatewayclass.gateway.networking.k8s.io/consortium-envoy unchanged
+gateway.gateway.networking.k8s.io/consortium configured
+httproute.gateway.networking.k8s.io/consortium-frontend configured
+$ k wait --for=condition=Accepted gateway/consortium --timeout=180s
+gateway.gateway.networking.k8s.io/consortium condition met
+$ k apply -k k8s/deploy-strategies/rolling
+service/web unchanged
+deployment.apps/web configured
+$ k rollout status deployment/web --timeout=180s
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "web" rollout to finish: 1 old replicas are pending termination...
+deployment "web" successfully rolled out
+$ k apply -f k8s/deploy-strategies/routes/rolling.yaml
+httproute.gateway.networking.k8s.io/consortium-api created
+$ minikube kubectl -- -n envoy-gateway-system port-forward svc/envoy-default-consortium-6e5bb019 18880:80
+$ curl -fso /dev/null -w Frontend via Envoy: HTTP %{http_code}\n http://127.0.0.1:18880/
+Frontend via Envoy: HTTP 200
+$ k get gateway,httproute
+NAME                                           CLASS              ADDRESS   PROGRAMMED   AGE
+gateway.gateway.networking.k8s.io/consortium   consortium-envoy             False        3d
+
+NAME                                                      HOSTNAMES   AGE
+httproute.gateway.networking.k8s.io/consortium-api                    6s
+httproute.gateway.networking.k8s.io/consortium-frontend               3d
+
+== 1. Rolling ==
+$ traffic 24  | count by HTTP status and version
+     24 200 v1
+$ k get pods -l app=web -o custom-columns=POD:.metadata.name,READY:.status.containerStatuses[0].ready,IMAGE:.spec.containers[0].image
+POD                   READY   IMAGE
+web-555cfb494-hrmlw   true    consortium-backend:deploy-v1
+web-555cfb494-mznpx   true    consortium-backend:deploy-v1
+$ TRAFFIC_DELAY=0.4 traffic 92 &
+$ k set image deployment/web web=consortium-backend:deploy-v2
+deployment.apps/web image updated
+POD                    READY   IMAGE
+web-555cfb494-hrmlw    true    consortium-backend:deploy-v1
+web-555cfb494-mznpx    true    consortium-backend:deploy-v1
+web-6db96f7497-rgmlm   false   consortium-backend:deploy-v2
+POD                    READY   IMAGE
+web-555cfb494-hrmlw    true    consortium-backend:deploy-v1
+web-555cfb494-mznpx    true    consortium-backend:deploy-v1
+web-6db96f7497-rgmlm   true    consortium-backend:deploy-v2
+POD                    READY   IMAGE
+web-555cfb494-hrmlw    true    consortium-backend:deploy-v1
+web-555cfb494-mznpx    true    consortium-backend:deploy-v1
+web-6db96f7497-62s2l   false   consortium-backend:deploy-v2
+web-6db96f7497-rgmlm   true    consortium-backend:deploy-v2
+POD                    READY   IMAGE
+web-555cfb494-mznpx    true    consortium-backend:deploy-v1
+web-6db96f7497-62s2l   false   consortium-backend:deploy-v2
+web-6db96f7497-rgmlm   true    consortium-backend:deploy-v2
+POD                    READY   IMAGE
+web-555cfb494-mznpx    true    consortium-backend:deploy-v1
+web-6db96f7497-62s2l   true    consortium-backend:deploy-v2
+web-6db96f7497-rgmlm   true    consortium-backend:deploy-v2
+POD                    READY   IMAGE
+web-6db96f7497-62s2l   true    consortium-backend:deploy-v2
+web-6db96f7497-rgmlm   true    consortium-backend:deploy-v2
+$ k rollout status deployment/web --timeout=180s
+deployment "web" successfully rolled out
+HTTP responses during the update (v1, then mixed, then v2):
+     42 200 v1
+     50 200 v2
+$ traffic 24  | count by HTTP status and version
+     24 200 v2
+
+== 2. Blue/Green ==
+$ k apply -k k8s/deploy-strategies/v1
+service/web-v1 created
+deployment.apps/web-v1 created
+$ k apply -k k8s/deploy-strategies/v2
+service/web-v2 created
+deployment.apps/web-v2 created
+$ k rollout status deployment/web-v1 --timeout=180s
+Waiting for deployment "web-v1" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "web-v1" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "web-v1" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "web-v1" rollout to finish: 1 of 2 updated replicas are available...
+deployment "web-v1" successfully rolled out
+$ k rollout status deployment/web-v2 --timeout=180s
+deployment "web-v2" successfully rolled out
+$ k get deploy web-v1 web-v2
+NAME     READY   UP-TO-DATE   AVAILABLE   AGE
+web-v1   2/2     2            2           17s
+web-v2   2/2     2            2           16s
+$ k apply -f k8s/deploy-strategies/routes/blue.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 20  | count by HTTP status and version
+     20 200 v1
+$ k apply -f k8s/deploy-strategies/routes/green.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 20  | count by HTTP status and version
+     20 200 v2
+$ k apply -f k8s/deploy-strategies/routes/blue.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 20  | count by HTTP status and version
+     20 200 v1
+
+== 3. Canary ==
+$ k apply -f k8s/deploy-strategies/routes/canary-90-10.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 200  | count by HTTP status and version
+    174 200 v1
+     26 200 v2
+$ k apply -f k8s/deploy-strategies/routes/canary-50-50.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 200  | count by HTTP status and version
+     98 200 v1
+    102 200 v2
+$ k apply -f k8s/deploy-strategies/routes/canary-0-100.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 200  | count by HTTP status and version
+    200 200 v2
+
+== 4. A/B ==
+$ k apply -f k8s/deploy-strategies/routes/ab.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 20  | count by HTTP status and version
+     20 200 v1
+$ traffic 20 -H X-User-Group: beta | count by HTTP status and version
+     20 200 v2
+
+== 5. Shadow ==
+$ k apply -f k8s/deploy-strategies/routes/shadow.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+$ traffic 6  | count by HTTP status and version
+      6 200 v1
+$ k logs -l app=web-v2 --prefix --since-time=<before the six requests> | grep /api/news
+web-v2-b875494dd-5wdph  GET /api/news  HTTP 200
+web-v2-b875494dd-5wdph  GET /api/news  HTTP 200
+web-v2-b875494dd-5wdph  GET /api/news  HTTP 200
+web-v2-b875494dd-nm8hd  GET /api/news  HTTP 200
+web-v2-b875494dd-nm8hd  GET /api/news  HTTP 200
+web-v2-b875494dd-nm8hd  GET /api/news  HTTP 200
+
+== Done ==
+$ k apply -f k8s/deploy-strategies/routes/rolling.yaml
+httproute.gateway.networking.k8s.io/consortium-api configured
+Verified all five strategies. Gateway restored to web v2.
+
+Script done on 2026-11-21 14:36:54+03:00 [COMMAND_EXIT_CODE="0"]

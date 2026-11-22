@@ -7,6 +7,7 @@ load_dotenv()
 
 class Config:
 
+    APP_VERSION = os.environ.get('APP_VERSION', 'dev')
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
     
     POSTGRES_USER = os.environ.get(

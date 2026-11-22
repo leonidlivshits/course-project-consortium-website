@@ -1,3 +1,5 @@
+from socket import gethostname
+
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -109,6 +111,13 @@ def register_admin_views(admin: Admin, db):
 def create_app(config_path = 'app.config.Config', mail = mail):
     app = Flask(__name__)
     app.config.from_object(config_path)
+    pod_name = gethostname()
+
+    @app.after_request
+    def add_release_headers(response):
+        response.headers['X-App-Version'] = app.config['APP_VERSION']
+        response.headers['X-App-Pod'] = pod_name
+        return response
 
     basic_auth.init_app(app)
 
